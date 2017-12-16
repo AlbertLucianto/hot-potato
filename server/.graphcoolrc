@@ -1,0 +1,3 @@
+targets:
+  dev: local-hot-potato/cjb9007wy00040112akxhybcl
+  default: dev
