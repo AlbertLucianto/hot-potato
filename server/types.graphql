@@ -1,44 +1,21 @@
-# The following types define the data model of the example service
-# based on which the GraphQL API is generated
+type Potato @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  # Every relation also required a back-relation (to determine 1:1, 1:n or n:m)
+  createdBy: User! @relation(name: "UserCreatesPotato")
+  droppedBy: User @relation(name: "UserDropsPotato")
+  bearers: [User!]! @relation(name: "UsersBearPotato")
+}
 
 type User @model {
   id: ID! @isUnique
-  name: String
-  dateOfBirth: DateTime
+  createdAt: DateTime!
 
-  # Uncomment below - you can declare relations between models like this
-
-  # posts: [Post!]! @relation(name: "UserPosts")
+  email: String! @isUnique
+  password: String!
+  name: String!
+  
+  create: [Potato!]! @relation(name: "UserCreatesPotato")
+  potatoes: [Potato!]! @relation(name: "UsersBearPotato")
+  drops: [Potato!]! @relation(name: "UserDropsPotato")
 }
-
-
-# Uncomment the model below as well
-
-# type Post @model {
-#   id: ID! @isUnique
-#   title: String!
-#
-#   # Every relation also required a back-relation (to determine 1:1, 1:n or n:m)
-#   author: User! @relation(name: "UserPosts")
-# }
-
-
-# added by email-password template: (please uncomment)
-# type User @model {
-#   # Required system field:
-#   id: ID! @isUnique # read-only (managed by Graphcool)
-# 
-#   # Optional system fields (remove if not needed):
-#   createdAt: DateTime! # read-only (managed by Graphcool)
-#   updatedAt: DateTime! # read-only (managed by Graphcool)
-# 
-#   email: String! @isUnique
-#   password: String!
-# }
-# 
-
-
-
-# added by mailgun template: (please uncomment)
-# 
-
