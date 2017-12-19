@@ -31,7 +31,7 @@ async function createNewPotato(api: GraphQLClient, userId: string): Promise<stri
   const mutation = `
     mutation createNewPotato($userId: ID!) {
       createPotato(
-        createById: $userId
+        createdById: $userId
       ) {
         id
       }
