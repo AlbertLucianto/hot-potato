@@ -4,7 +4,7 @@ type Potato @model {
   # Every relation also required a back-relation (to determine 1:1, 1:n or n:m)
   createdBy: User! @relation(name: "UserCreatesPotato")
   droppedBy: User @relation(name: "UserDropsPotato")
-  bearers: [User!]! @relation(name: "UsersBearPotato")
+  holders: [Holder!]! @relation(name: "PotatoHeld")
 }
 
 type User @model {
@@ -16,6 +16,15 @@ type User @model {
   name: String!
   
   create: [Potato!]! @relation(name: "UserCreatesPotato")
-  potatoes: [Potato!]! @relation(name: "UsersBearPotato")
+  holdings: [Holder!]! @relation(name: "UserHold")
   drops: [Potato!]! @relation(name: "UserDropsPotato")
+}
+
+type Holder @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+
+  user: User! @relation(name: "UserHold")
+  potato: Potato! @relation(name: "PotatoHeld")
+  sequence: Int! @default(value: 0)
 }

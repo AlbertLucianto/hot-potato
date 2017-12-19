@@ -21,7 +21,7 @@ permissions:
     authenticated: true
   - operation: User.read
     authenticated: true
-    fields: [id, createdAt, email, potatoes, drops]
+    fields: [id, createdAt, email, holdings, drops]
 
 functions:
 
@@ -59,4 +59,10 @@ functions:
     schema: src/manage-potato/deployPotato.graphql
     handler:
       code: src/manage-potato/deployPotato.ts
+
+  passPotato:
+    type: resolver
+    schema: src/manage-potato/passPotato.graphql
+    handler:
+      code: src/manage-potato/passPotato.ts
 
