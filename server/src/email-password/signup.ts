@@ -1,56 +1,56 @@
-import { fromEvent, FunctionEvent } from 'graphcool-lib'
-import { GraphQLClient } from 'graphql-request'
-import * as bcrypt from 'bcryptjs'
-import * as validator from 'validator'
+import * as bcrypt from "bcryptjs";
+import { fromEvent, FunctionEvent } from "graphcool-lib";
+import { GraphQLClient } from "graphql-request";
+import * as validator from "validator";
 
-interface User {
-  id: string
+interface IUser {
+  id: string;
 }
 
-interface EventData {
-  name: string,
-  email: string
-  password: string
+interface IEventData {
+  name: string;
+  email: string;
+  password: string;
 }
 
-const SALT_ROUNDS = 10
+const SALT_ROUNDS = 10;
 
-export default async (event: FunctionEvent<EventData>) => {
-  console.log(event)
+export default async (event: FunctionEvent<IEventData>) => {
+  console.log(event);
 
   try {
-    const graphcool = fromEvent(event)
-    const api = graphcool.api('simple/v1')
+    const graphcool = fromEvent(event);
+    const api = graphcool.api("simple/v1");
 
-    const { name, email, password } = event.data
+    const { name, email, password } = event.data;
 
     if (!validator.isEmail(email)) {
-      return { error: 'Not a valid email' }
+      return { error: "Not a valid email" };
     }
 
     // check if user exists already
     const userExists: boolean = await getUser(api, email)
-      .then(r => r.User !== null)
+      .then((r) => r.User !== null);
     if (userExists) {
-      return { error: 'Email already in use' }
+      return { error: "Email already in use" };
     }
 
     // create password hash
-    const salt = bcrypt.genSaltSync(SALT_ROUNDS)
-    const hash = await bcrypt.hash(password, salt)
+    const salt = bcrypt.genSaltSync(SALT_ROUNDS);
+    const hash = await bcrypt.hash(password, salt);
 
     // create new user
-    const userId = await createGraphcoolUser(api, name, email, hash)
+    const userId = await createGraphcoolUser(api, name, email, hash);
 
     // generate node token for new User node
-    const token = await graphcool.generateNodeToken(userId, 'User')
+    const token = await graphcool.generateNodeToken(userId, "User");
 
-    return { data: { id: userId, token } }
+    return { data: { id: userId, token } };
   } catch (e) {
-    console.log(e)
-    return { error: 'An unexpected error occured during signup.' }
+    console.log(e);
+    return { error: "An unexpected error occured during signup." };
   }
-}
+};
 
 async function getUser(api: GraphQLClient, email: string): Promise<{ User }> {
   const query = `
@@ -59,13 +59,13 @@ async function getUser(api: GraphQLClient, email: string): Promise<{ User }> {
         id
       }
     }
-  `
+  `;
 
   const variables = {
     email,
-  }
+  };
 
-  return api.request<{ User }>(query, variables)
+  return api.request<{ User }>(query, variables);
 }
 
 async function createGraphcoolUser(api: GraphQLClient, name: string, email: string, password: string): Promise<string> {
@@ -79,14 +79,14 @@ async function createGraphcoolUser(api: GraphQLClient, name: string, email: stri
         id
       }
     }
-  `
+  `;
 
   const variables = {
-    name,
     email,
-    password: password,
-  }
+    name,
+    password,
+  };
 
-  return api.request<{ createUser: User }>(mutation, variables)
-    .then(r => r.createUser.id)
+  return api.request<{ createUser: IUser }>(mutation, variables)
+    .then((r) => r.createUser.id);
 }

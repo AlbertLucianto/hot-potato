@@ -1,0 +1,11 @@
+{
+	"extends": "tslint:recommended",
+	"rules": {
+		"prefer-const": [true, "always"],
+		"semicolon": [true, "always"],
+		"no-console": [false, "always", "warn"]
+	},
+	"exclude": [
+    "node_modules"
+  ]
+}

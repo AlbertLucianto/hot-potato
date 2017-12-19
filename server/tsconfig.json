@@ -5,8 +5,12 @@
     "node_modules"
 	],
 	"compilerOptions": {
+		"baseUrl": "src",
 		"experimentalDecorators": true,
 		"target": "es5",
+		"noUnusedLocals": true,
+		"emitDecoratorMetadata": true,
+		"allowJs": true,
 		"lib": [
 			"es2016",
 			"dom"

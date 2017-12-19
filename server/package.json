@@ -16,6 +16,8 @@
   },
   "devDependencies": {
     "@types/node": "^8.0.45",
-    "@types/stripe-node": "^4.7.1"
+    "@types/stripe-node": "^4.7.1",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
   }
 }
