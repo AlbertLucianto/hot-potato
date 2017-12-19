@@ -54,3 +54,9 @@ functions:
     handler:
       code: src/email-password/loggedInUser.ts
 
+  deployPotato:
+    type: resolver
+    schema: src/manage-potato/deployPotato.graphql
+    handler:
+      code: src/manage-potato/deployPotato.ts
+

@@ -1,0 +1,7 @@
+type PotatoPayload {
+  id: ID!
+}
+
+extend type Mutation {
+  deployPotato: PotatoPayload
+}
