@@ -1,0 +1,10 @@
+type HolderPayload {
+  id: ID!
+}
+
+extend type Mutation {
+  passPotato(
+    userId: ID!
+    potatoId: ID!
+  ): HolderPayload!
+}
