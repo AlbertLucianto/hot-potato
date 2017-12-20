@@ -15,13 +15,16 @@ permissions:
 
   - operation: Potato.read
     authenticated: false
-  - operation: Potato.create
-    authenticated: true
-  - operation: Potato.update
-    authenticated: true
+  # - operation: Potato.create
+  #   authenticated: true
+  # - operation: Potato.update
+  #   authenticated: true
   - operation: User.read
     authenticated: true
-    fields: [id, createdAt, email, holdings]
+    fields: [id, name, createdAt, email, holdings]
+  - operation: User.update
+    authenticated: true
+    query: src/permissions/models/User.graphql:isOwner
 
 functions:
 
@@ -65,4 +68,10 @@ functions:
     schema: src/manage-potato/passPotato.graphql
     handler:
       code: src/manage-potato/passPotato.ts
+
+  lastPotatoHolder:
+    type: resolver
+    schema: src/manage-potato/lastPotatoHolder.graphql
+    handler:
+      code: src/manage-potato/lastPotatoHolder.ts
 
