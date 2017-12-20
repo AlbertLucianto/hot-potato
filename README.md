@@ -27,9 +27,33 @@ _Not yet under development. Most probably using VueJS_
 
 1. Set `server` as current working directory.
 2. Ensure docker is installed on the machine. Run it.
-3. Run `graphcool local up <any_name_for_cluster>`. It will create three docker containers, including MySQL database.
-4. Run `graphcool deploy`.
-5. **If `.graphcoolrc` file is not yet there, it will ask you to choose a cluster, and create the file. Else, delete `.graphcoolrc` file as it may fail the setup**
+3. Install graphcool-cli with `npm install -g graphcool`.
+4. Run `gc local up <any_name_for_cluster>`. It will create three docker containers, including MySQL database.
+5. Run `gc deploy`.
+6. **If `.graphcoolrc` file is not yet there, it will ask you to choose a cluster, and automatically create the file. Else, delete `.graphcoolrc` file as it may fail the setup**
+
+#### Re-Deployment
+
+Some changes in graphql type schema may break something and difficult to fix. You can create a fresh cluster by deleting the old and create the new one.
+
+To delete the containers, run:
+
+```shell
+# stop all running containers
+docker stop $(docker ps -a -q)
+
+# remove all running containers
+docker rm $(docker ps -a -q)
+```
+
+But, you may encounter this error when deploying with the same project name: `project <project_name> already exists`. It was caused by dangling volume in docker.
+
+Thus, to clear them, lastly run: **warning: it will also clear other docker containers**
+
+```shell
+# remove all dangling volumes
+docker volume rm `docker volume ls -q -f dangling=true`
+```
 
 ## Access MySQL in local deployment
 
