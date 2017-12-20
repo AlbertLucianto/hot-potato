@@ -15,7 +15,7 @@ interface IHolder {
 interface IPotato {
   id: string;
   holders: Array<{ id: string }>;
-  droppedDate: Date;
+  droppedDate: string;
   duration: number;
 }
 
@@ -110,7 +110,7 @@ async function isHolding(api: GraphQLClient, userId: string, potatoId: string): 
   };
 
   return api.request<{ allHolders: [IHolder] }>(query, variables)
-    .then((r) => r.allHolders[0] && r.allHolders[0].user.id === userId);
+    .then((r) => !r.allHolders[0] || r.allHolders[0].user.id === userId);
 }
 
 async function isPotatoDropped(api: GraphQLClient, potatoId: string): Promise<boolean> {
@@ -127,7 +127,7 @@ async function isPotatoDropped(api: GraphQLClient, potatoId: string): Promise<bo
   };
 
   return api.request<{ Potato: IPotato }>(query, variables)
-    .then((r) => r.Potato.droppedDate < new Date());
+    .then((r) => new Date(r.Potato.droppedDate) < new Date());
 }
 
 async function hadReceived(api: GraphQLClient, receiverId: string, potatoId: string): Promise<boolean> {
@@ -173,8 +173,8 @@ async function passPotato(api: GraphQLClient, potatoId: string, receiverId: stri
     .then((r) => !r.allHolders[0] ? 0 : r.allHolders[0].sequence + 1);
 
   const mutation = `
-    mutation passPotato($potatoId: ID!, $receiverId: ID!, $sequence) {
-      createHolder(potatoId: $potatoId, receiverId: $receiverId, sequence: $sequence) {
+    mutation passPotato($potatoId: ID!, $receiverId: ID!, $sequence: Int!) {
+      createHolder(potatoId: $potatoId, userId: $receiverId, sequence: $sequence) {
         id
         sequence
       }
@@ -194,18 +194,18 @@ async function passPotato(api: GraphQLClient, potatoId: string, receiverId: stri
 async function updateDroppedDate(
   api: GraphQLClient,
   potatoId: string,
-): Promise<Date> {
+): Promise<string> {
 
   const { duration } = await api.request<{ Potato: IPotato }>(`
     query potatoDuration($potatoId: ID!) {
-      Potato(potatoId: $potatoId) {
+      Potato(id: $potatoId) {
         duration
       }
     }
   `, { potatoId })
     .then((r) => r.Potato);
 
-  const newDroppedDate = new Date().setTime(new Date().getTime() + duration * 60 * 60 * 1000);
+  const newDroppedDate = new Date(new Date().setTime(new Date().getTime() + duration * 60 * 60 * 1000)).toISOString();
 
   const mutation = `
     mutation updateDroppedDate($potatoId: ID!, $droppedDate: DateTime!) {

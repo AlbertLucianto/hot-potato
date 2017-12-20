@@ -39,7 +39,7 @@ export default async (event: FunctionEvent<IEventData>) => {
 
 async function createNewPotato(api: GraphQLClient, userId: string, duration: number): Promise<string> {
   const mutation = `
-    mutation createNewPotato($userId: ID!, $droppedDate: DateTime!, $duration) {
+    mutation createNewPotato($userId: ID!, $droppedDate: DateTime!, $duration: Int!) {
       createPotato(
         createdById: $userId
         droppedDate: $droppedDate
@@ -51,7 +51,7 @@ async function createNewPotato(api: GraphQLClient, userId: string, duration: num
   `;
 
   const variables = {
-    droppedDate: new Date().setTime(new Date().getTime() + duration * 60 * 60 * 1000),
+    droppedDate: new Date(new Date().setTime(new Date().getTime() + duration * 60 * 60 * 1000)).toISOString(),
     duration,
     userId,
   };
