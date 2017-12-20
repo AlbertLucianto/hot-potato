@@ -3,8 +3,8 @@ type Potato @model {
   createdAt: DateTime!
   # Every relation also required a back-relation (to determine 1:1, 1:n or n:m)
   createdBy: User! @relation(name: "UserCreatesPotato")
-  lastHeldBy: User @relation(name: "UserDropsPotato")
-  droppedDate: DateTime
+  droppedDate: DateTime!
+  duration: Int! @default(value: 24)
   holders: [Holder!]! @relation(name: "PotatoHeld")
 }
 
@@ -16,9 +16,8 @@ type User @model {
   password: String!
   name: String!
   
-  create: [Potato!]! @relation(name: "UserCreatesPotato")
+  createdPotatoes: [Potato!]! @relation(name: "UserCreatesPotato")
   holdings: [Holder!]! @relation(name: "UserHold")
-  drops: [Potato!]! @relation(name: "UserDropsPotato")
 }
 
 type Holder @model {
