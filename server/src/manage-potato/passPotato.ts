@@ -6,6 +6,10 @@ interface IEventData {
   potatoId: string;
 }
 
+interface IUser {
+  id: string;
+}
+
 interface IHolder {
   id: string;
   user: { id: string };
@@ -89,18 +93,8 @@ async function getUser(api: GraphQLClient, receiverId: string): Promise<{ User }
 async function isHolding(api: GraphQLClient, userId: string, potatoId: string): Promise<boolean> {
   const query = `
     query isHolding($potatoId: ID!) {
-      allHolders(
-        filter: {
-          potato: {
-            id: $potatoId
-          }
-        },
-        orderBy: sequence_ASC,
-        last: 1
-      ) {
-        user {
-          id
-        }
+      lastPotatoHolder(potatoId: $potatoId) {
+        id
       }
     }
   `;
@@ -109,8 +103,8 @@ async function isHolding(api: GraphQLClient, userId: string, potatoId: string): 
     potatoId,
   };
 
-  return api.request<{ allHolders: [IHolder] }>(query, variables)
-    .then((r) => !r.allHolders[0] || r.allHolders[0].user.id === userId);
+  return api.request<{ lastPotatoHolder: IUser }>(query, variables)
+    .then((r) => !r.lastPotatoHolder || r.lastPotatoHolder.id === userId);
 }
 
 async function isPotatoDropped(api: GraphQLClient, potatoId: string): Promise<boolean> {
