@@ -1,10 +1,16 @@
-type HolderPayload {
+# Payload type of those declared in Graphcool database currently not supported
+# It's a bit tedious
+
+# See proposal: https://github.com/graphcool/framework/issues/743
+type PassPotatoPayload {
   id: ID!
+  sequence: Int!
+  droppedDate: DateTime!
 }
 
 extend type Mutation {
   passPotato(
-    userId: ID!
+    receiverId: ID!
     potatoId: ID!
-  ): HolderPayload!
+  ): PassPotatoPayload!
 }

@@ -2,16 +2,21 @@ import { fromEvent, FunctionEvent } from "graphcool-lib";
 import { GraphQLClient } from "graphql-request";
 
 interface IEventData {
-  userId: string;
+  receiverId: string;
   potatoId: string;
 }
 
 interface IHolder {
   id: string;
+  user: { id: string };
+  sequence: number;
 }
 
-interface IPotatoPayload {
+interface IPotato {
+  id: string;
   holders: Array<{ id: string }>;
+  droppedDate: Date;
+  duration: number;
 }
 
 export default async (event: FunctionEvent<IEventData>) => {
@@ -25,57 +30,113 @@ export default async (event: FunctionEvent<IEventData>) => {
     const graphcool = fromEvent(event);
     const api = graphcool.api("simple/v1");
 
-    const { userId, potatoId } = event.data;
+    const { receiverId, potatoId } = event.data;
+    const userId = event.context.auth.nodeId;
 
     // check if sender is holding the potato
+    const userIsHolding: boolean = await isHolding(api, userId, potatoId);
+    if (!userIsHolding) {
+      return { error: "User is not holding the potato" };
+    }
+
     // check if the potato has dropped
+    const isDropped: boolean = await isPotatoDropped(api, potatoId);
+    if (isDropped) {
+      return { error: "You have dropped the potato" };
+    }
 
     // check if receiver exists
-    const userExists: boolean = await getUser(api, userId)
+    const receiverExists: boolean = await getUser(api, receiverId)
       .then((r) => r.User !== null);
-    if (!userExists) {
+    if (!receiverExists) {
       return { error: "User does not exist" };
     }
 
     // check if receiver has already held the potato
-    const userHadReceived: boolean = await hadReceived(api, userId, potatoId)
-      .then((r) => !!r.Potato.holders.length);
+    const userHadReceived: boolean = await hadReceived(api, receiverId, potatoId);
     if (userHadReceived) {
       return { error: "User has already received the potato" };
     }
 
-    const holderId = await passPotato(api, potatoId, userId);
+    // Add to list of holders in the potato
+    const { id, sequence } = await passPotato(api, potatoId, receiverId);
 
-    return { data: { id: holderId } };
+    const droppedDate = await updateDroppedDate(api, potatoId);
+
+    return { data: { id, droppedDate, sequence } };
   } catch (e) {
     console.log(e);
     return { error: "An unexpected error occured during passPotato" };
   }
 };
 
-async function getUser(api: GraphQLClient, userId: string): Promise<{ User }> {
+async function getUser(api: GraphQLClient, receiverId: string): Promise<{ User }> {
   const query = `
-    query getUser($userId: ID!) {
-      User(id: $userId) {
+    query getUser($receiverId: ID!) {
+      User(id: $receiverId) {
         id
       }
     }
   `;
 
   const variables = {
-    userId,
+    receiverId,
   };
 
   return api.request<{ User }>(query, variables);
 }
 
-async function hadReceived(api: GraphQLClient, userId: string, potatoId: string): Promise<{ Potato: IPotatoPayload }> {
+async function isHolding(api: GraphQLClient, userId: string, potatoId: string): Promise<boolean> {
   const query = `
-    query hasReceived($userId: ID!, $potatoId: ID!) {
+    query isHolding($potatoId: ID!) {
+      allHolders(
+        filter: {
+          potato: {
+            id: $potatoId
+          }
+        },
+        orderBy: sequence_ASC,
+        last: 1
+      ) {
+        user {
+          id
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    potatoId,
+  };
+
+  return api.request<{ allHolders: [IHolder] }>(query, variables)
+    .then((r) => r.allHolders[0] && r.allHolders[0].user.id === userId);
+}
+
+async function isPotatoDropped(api: GraphQLClient, potatoId: string): Promise<boolean> {
+  const query = `
+    query isDropped($potatoId: ID!) {
+      Potato(id: $potatoId) {
+        droppedDate
+      }
+    }
+  `;
+
+  const variables = {
+    potatoId,
+  };
+
+  return api.request<{ Potato: IPotato }>(query, variables)
+    .then((r) => r.Potato.droppedDate < new Date());
+}
+
+async function hadReceived(api: GraphQLClient, receiverId: string, potatoId: string): Promise<boolean> {
+  const query = `
+    query hasReceived($receiverId: ID!, $potatoId: ID!) {
       Potato(id: $potatoId) {
         holders(filter: {
           user: {
-            id: $userId
+            id: $receiverId
           }
         }) {
           id
@@ -86,26 +147,80 @@ async function hadReceived(api: GraphQLClient, userId: string, potatoId: string)
 
   const variables = {
     potatoId,
-    userId,
+    receiverId,
   };
 
-  return api.request<{ Potato }>(query, variables);
+  return api.request<{ Potato: IPotato }>(query, variables)
+    .then((r) => !!r.Potato.holders.length);
 }
 
-async function passPotato(api: GraphQLClient, potatoId: string, userId: string): Promise<string> {
+async function passPotato(api: GraphQLClient, potatoId: string, receiverId: string): Promise<IHolder> {
+  const nextSequence = await api.request<{ allHolders: [IHolder] }>(`
+    query lastSeq($potatoId: ID!) {
+      allHolders(
+        filter: {
+          potato: {
+            id: $potatoId
+          }
+        },
+        orderBy: sequence_ASC,
+        last: 1
+      ) {
+        sequence
+      }
+    }
+  `, { potatoId })
+    .then((r) => !r.allHolders[0] ? 0 : r.allHolders[0].sequence + 1);
+
   const mutation = `
-    mutation passPotato($potatoId: ID!, $userId: ID!) {
-      createHolder(potatoId: $potatoId, userId: $userId, sequence: 42) {
+    mutation passPotato($potatoId: ID!, $receiverId: ID!, $sequence) {
+      createHolder(potatoId: $potatoId, receiverId: $receiverId, sequence: $sequence) {
         id
+        sequence
       }
     }
   `;
 
   const variables = {
     potatoId,
-    userId,
+    receiverId,
+    sequence: nextSequence,
   };
 
   return api.request<{ createHolder: IHolder }>(mutation, variables)
-    .then((r) => r.createHolder.id);
+    .then((r) => r.createHolder);
+}
+
+async function updateDroppedDate(
+  api: GraphQLClient,
+  potatoId: string,
+): Promise<Date> {
+
+  const { duration } = await api.request<{ Potato: IPotato }>(`
+    query potatoDuration($potatoId: ID!) {
+      Potato(potatoId: $potatoId) {
+        duration
+      }
+    }
+  `, { potatoId })
+    .then((r) => r.Potato);
+
+  const newDroppedDate = new Date().setTime(new Date().getTime() + duration * 60 * 60 * 1000);
+
+  const mutation = `
+    mutation updateDroppedDate($potatoId: ID!, $droppedDate: DateTime!) {
+      updatePotato(id: $potatoId, droppedDate: $droppedDate) {
+        id
+        droppedDate
+      }
+    }
+  `;
+
+  const variables = {
+    droppedDate: newDroppedDate,
+    potatoId,
+  };
+
+  return api.request<{ Potato: IPotato }>(mutation, variables)
+    .then((r) => r.Potato.droppedDate);
 }
