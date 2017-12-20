@@ -221,6 +221,6 @@ async function updateDroppedDate(
     potatoId,
   };
 
-  return api.request<{ Potato: IPotato }>(mutation, variables)
-    .then((r) => r.Potato.droppedDate);
+  return api.request<{ updatePotato: IPotato }>(mutation, variables)
+    .then((r) => r.updatePotato.droppedDate);
 }
