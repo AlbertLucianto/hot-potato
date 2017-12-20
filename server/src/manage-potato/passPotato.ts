@@ -27,6 +27,9 @@ export default async (event: FunctionEvent<IEventData>) => {
 
     const { userId, potatoId } = event.data;
 
+    // check if sender is holding the potato
+    // check if the potato has dropped
+
     // check if receiver exists
     const userExists: boolean = await getUser(api, userId)
       .then((r) => r.User !== null);
