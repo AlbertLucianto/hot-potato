@@ -1,7 +1,9 @@
-type PotatoPayload {
+type DeployPotatoPayload {
   id: ID!
 }
 
 extend type Mutation {
-  deployPotato: PotatoPayload
+  deployPotato(
+    duration: Int!
+  ): DeployPotatoPayload
 }

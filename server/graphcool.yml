@@ -21,7 +21,7 @@ permissions:
     authenticated: true
   - operation: User.read
     authenticated: true
-    fields: [id, createdAt, email, holdings, drops]
+    fields: [id, createdAt, email, holdings, createdPotatoes]
 
 functions:
 

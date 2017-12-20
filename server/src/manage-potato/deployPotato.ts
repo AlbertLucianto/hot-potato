@@ -3,9 +3,14 @@ import { GraphQLClient } from "graphql-request";
 
 interface IPotato {
   id: string;
+  duration: number;
 }
 
-export default async (event: FunctionEvent<{}>) => {
+interface IEventData {
+  duration: number;
+}
+
+export default async (event: FunctionEvent<IEventData>) => {
   console.log(event);
 
   try {
@@ -17,8 +22,13 @@ export default async (event: FunctionEvent<{}>) => {
     const api = graphcool.api("simple/v1");
 
     const userId = event.context.auth.nodeId;
+    const { duration } = event.data;
 
-    const potatoId = await createNewPotato(api, userId);
+    if (!Number.isInteger(duration)) {
+      return { error: "Duration must be an integer, representing hour" };
+    }
+
+    const potatoId = await createNewPotato(api, userId, duration);
 
     return { data: { id: potatoId } };
   } catch (e) {
@@ -27,11 +37,13 @@ export default async (event: FunctionEvent<{}>) => {
   }
 };
 
-async function createNewPotato(api: GraphQLClient, userId: string): Promise<string> {
+async function createNewPotato(api: GraphQLClient, userId: string, duration: number): Promise<string> {
   const mutation = `
-    mutation createNewPotato($userId: ID!) {
+    mutation createNewPotato($userId: ID!, $droppedDate: DateTime!, $duration) {
       createPotato(
         createdById: $userId
+        droppedDate: $droppedDate
+        duration: $duration
       ) {
         id
       }
@@ -39,6 +51,8 @@ async function createNewPotato(api: GraphQLClient, userId: string): Promise<stri
   `;
 
   const variables = {
+    droppedDate: new Date().setTime(new Date().getTime() + duration * 60 * 60 * 1000),
+    duration,
     userId,
   };
 
