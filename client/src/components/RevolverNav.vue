@@ -38,13 +38,18 @@ export default {
     },
   },
   watch: {
-    $route(route) {
-      this.active = route.matched[0].props.default.idx;
+    $route() { this.updateActive(); },
+  },
+  methods: {
+    updateActive() {
+      const match = this.$route.matched[0];
+      if (match) {
+        this.active = this.$route.matched[0].props.default.idx;
+      }
     },
   },
   mounted() {
-    console.log(this.routes, this.$route.matched[0].props.default.idx);
-    this.active = this.$route.matched[0].props.default.idx;
+    this.updateActive();
   },
 };
 </script>
