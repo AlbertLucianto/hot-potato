@@ -13,13 +13,16 @@
 * Docker
 * TypeScript
 
+### Client
+
+* VueJS
+* Vuex
+* Apollo Client
+* Vue Apollo
+
 ### Database (handled by Graphcool)
 
 * MySQL
-
-### Client
-
-_Not yet under development. Most probably using VueJS_
 
 ## Local Deployment
 
@@ -31,6 +34,15 @@ _Not yet under development. Most probably using VueJS_
 4. Run `gc local up <any_name_for_cluster>`. It will create three docker containers, including MySQL database.
 5. Run `gc deploy`.
 6. **If `.graphcoolrc` file is not yet there, it will ask you to choose a cluster, and automatically create the file. Else, delete `.graphcoolrc` file as it may fail the setup**
+
+### Client
+
+1. **Make sure you have set up the server**
+2. Set `server` as current working directory.
+3. Get the server api url by running `gc info`, it will print out list of API and Endpoints. Copy the endpoint with `Simple` API.
+4. Go to `client` as working directory.
+5. Replace `uri` in `createHttpLink` to be the one you just copied.
+6. Run dev server with `npm run dev`.
 
 #### Re-Deployment
 
