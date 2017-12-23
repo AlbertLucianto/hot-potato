@@ -1,19 +1,34 @@
 <template>
   <div id="app">
     <div class="routerComponent__container">
-      <router-view/>
+      <router-view :userId="loggedInUser ? loggedInUser.id : null"/>
       <revolver-nav/>
     </div>
   </div>
 </template>
 
 <script>
+import gql from 'graphql-tag';
+
 import RevolverNav from '@/components/RevolverNav';
 
 export default {
   name: 'app',
   components: {
     RevolverNav,
+  },
+  apollo: {
+    loggedInUser() {
+      return {
+        query: gql`query isUserLoggedIn {
+          loggedInUser {
+            id
+          }
+        }`,
+        result() {},
+        fetchPolicy: 'cache-and-network',
+      };
+    },
   },
   methods: {
   },
@@ -24,6 +39,12 @@ export default {
 body {
   background-color: #445;
   margin: 0;
+}
+input, button {
+  -webkit-appearance: none;
+  outline: none;
+  border: none;
+  background: transparent;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

@@ -17,8 +17,6 @@ const httpLink = createHttpLink({
   uri: 'http://localhost:60000/simple/v1/cjbeszs0u00020127v5x15uuc',
 });
 
-localStorage.setItem('AUTH_TOKEN', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MTM3NTg5NTcsImNsaWVudElkIjoiY2piOHlkOXF1MDAwMDAxMDRrNHdtdWs2OSIsInByb2plY3RJZCI6ImNqYmVzenMwdTAwMDIwMTI3djV4MTV1dWMiLCJwZXJtYW5lbnRBdXRoVG9rZW5JZCI6ImNqYmVzenl6ajAwMmowMTI3M25vdzZhdmcifQ.600UcD18Z0bWB2l52f6JHwd2XLRDI2mQJ0sObbWAH5w');
-
 const middlewareLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem('AUTH_TOKEN');
   operation.setContext({
