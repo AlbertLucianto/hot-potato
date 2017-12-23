@@ -41,7 +41,7 @@ body {
   max-width: 100%;
   max-height: 100%;
   width: 414px;
-  height: 733px;
+  height: 736px;
   background: #FFF;
   border-radius: 15px;
   box-shadow: 0 20px 50px -25px rgba(0,0,0,.2);
