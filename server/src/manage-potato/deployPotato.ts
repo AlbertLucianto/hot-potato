@@ -10,6 +10,8 @@ interface IEventData {
   duration: number;
 }
 
+const MIN_DURATION = 12;
+
 export default async (event: FunctionEvent<IEventData>) => {
   console.log(event);
 
@@ -26,6 +28,10 @@ export default async (event: FunctionEvent<IEventData>) => {
 
     if (!Number.isInteger(duration)) {
       return { error: "Duration must be an integer, representing hour" };
+    }
+
+    if (duration < MIN_DURATION) {
+      return { error: "Duration must not be less than 12 (hours)" };
     }
 
     const potatoId = await createNewPotato(api, userId, duration);
