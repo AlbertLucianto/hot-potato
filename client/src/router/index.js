@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import LoginPage from '@/components/LoginPage';
+import NewPotato from '@/components/NewPotato';
+import ReceivedPage from '@/components/ReceivedPage';
+import SentPage from '@/components/SentPage';
 
 Vue.use(Router);
 
@@ -13,17 +16,17 @@ const routes = [
   {
     path: '/new',
     name: 'New Potato',
-    component: LoginPage,
+    component: NewPotato,
   },
   {
     path: '/received',
     name: 'Received',
-    component: LoginPage,
+    component: ReceivedPage,
   },
   {
     path: '/sent',
     name: 'Sent',
-    component: LoginPage,
+    component: SentPage,
   },
 ];
 
