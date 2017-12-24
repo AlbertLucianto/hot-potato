@@ -10,12 +10,11 @@ import VueApollo from 'vue-apollo';
 
 import App from './App';
 import router from './router';
+import configs from '../config/apollo.config';
 
 Vue.config.productionTip = false;
 
-const httpLink = createHttpLink({
-  uri: 'http://localhost:60000/simple/v1/cjbeszs0u00020127v5x15uuc',
-});
+const httpLink = createHttpLink(configs);
 
 const middlewareLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem('AUTH_TOKEN');

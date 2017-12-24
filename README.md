@@ -40,9 +40,10 @@
 1. **Make sure you have set up the server**
 2. Set `server` as current working directory.
 3. Get the server api url by running `gc info`, it will print out list of API and Endpoints. Copy the endpoint with `Simple` API.
-4. Go to `client` as working directory.
-5. Replace `uri` in `createHttpLink` to be the one you just copied.
-6. Run dev server with `npm run dev`.
+4. Go to `client/config` as working directory.
+5. Duplicate file `apollo.config.template.js` and change the name into `apollo.config.js`
+6. Set the `uri` to the endpoint just copied.
+7. Run dev server with `npm run dev`.
 
 #### Re-Deployment
 
