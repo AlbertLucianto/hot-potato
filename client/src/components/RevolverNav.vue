@@ -144,12 +144,12 @@ export default {
 
 @keyframes arrow__left-hovered {
   100% {
-    transform: translate(21.5px, 7.5px) rotate(-22.5deg);
+    transform: translate(21px, 9.5px) rotate(-22.5deg);
   }
 }
 @keyframes arrow__right-hovered {
   100% {
-    transform: translate(-21.5px, 7.5px) rotate(22.5deg);
+    transform: translate(-21px, 9.5px) rotate(22.5deg);
   }
 }
 </style>

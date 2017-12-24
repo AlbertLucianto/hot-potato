@@ -18,9 +18,18 @@
             @focus="setActive(1)" @blur="setActive(-1)"/>
         </div>
       </div>
-      <div class="loginLogoutButton" :class="{ disabled: loading }"
-        @mousedown="authenticateUser">
-        <div v-if="!loading">{{ userId ? 'Logout' : 'Login' }}</div>
+      <div class="buttons__container">
+        <div class="button" :class="{ disabled: loading }" v-if="!!userId" @mousedown="logoutUser">Logout</div>
+        <div class="buttons__group" v-if="!userId">
+          <div class="button button__login" v-if="!signingUp" :class="{ disabled: loading }" @mousedown="authenticateUser">Login</div>
+          <div class="button button__signup" :class="{ disabled: loading, input__wrapper: signingUp, active: active === 2 }" @mousedown="signupUser">
+            <div v-if="!signingUp">Signup</div>
+            <img v-if="signingUp" src="../../assets/SVG/cross.svg" class="button__icon cancel" @click="cancelSignup"/>
+            <input v-if="signingUp" v-model="nickname" placeholder="What should we call you with?"
+            @focus="setActive(2)" @blur="setActive(-1)"/>
+            <img v-if="signingUp" src="../../assets/SVG/tick.svg" class="button__icon confirm" :class="{ disabled: !nickname }"/>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -42,8 +51,10 @@ export default {
     return {
       email: '',
       password: '',
+      nickname: '',
       active: -1,
       loading: 0,
+      signingUp: false,
     };
   },
   apollo: {
@@ -72,36 +83,44 @@ export default {
       this.active = credential;
     },
     authenticateUser() {
-      if (this.loading) {
-        return;
-      }
-      if (this.userId) {
-        localStorage.removeItem('AUTH_TOKEN');
+      if (this.loading) return;
+      this.loading += 1;
+      const { email, password } = this;
+      this.$apollo.mutate({
+        mutation: gql`mutation ($email: String!, $password: String!) {
+          authenticateUser(email: $email, password: $password) {
+            id
+            token
+          }
+        }`,
+        variables: {
+          email,
+          password,
+        },
+      }).then((res) => {
+        localStorage.setItem('AUTH_TOKEN', res.data.authenticateUser.token);
         location.reload();
-      } else {
-        this.loading += 1;
-        const { email, password } = this;
-        this.$apollo.mutate({
-          mutation: gql`mutation ($email: String!, $password: String!) {
-            authenticateUser(email: $email, password: $password) {
-              id
-              token
-            }
-          }`,
-          variables: {
-            email,
-            password,
-          },
-        }).then((res) => {
-          localStorage.setItem('AUTH_TOKEN', res.data.authenticateUser.token);
-          location.reload();
-          this.loading -= 1;
-        }).catch((err) => {
-          /* eslint-disable no-console */
-          console.log(err);
-          this.loading -= 1;
-        });
+        this.loading -= 1;
+      }).catch((err) => {
+        /* eslint-disable no-console */
+        console.log(err);
+        this.loading -= 1;
+      });
+    },
+    logoutUser() {
+      if (this.loading) return;
+      localStorage.removeItem('AUTH_TOKEN');
+      location.reload();
+    },
+    signupUser() {
+      if (!this.signingUp) {
+        this.signingUp = true;
+      } else { // Confirm
       }
+    },
+    cancelSignup() {
+      this.nickname = '';
+      this.signingUp = false;
     },
     listenEnterKey(e) {
       const code = e.which || e.keyCode;
@@ -163,27 +182,33 @@ div {
     min-height: 400px;
     &__credentials {
       margin-bottom: 50px;
-      .input__wrapper {
-        margin: 5px 20px;
-        padding: 15px 25px;
-        border: 1px solid rgba(255,255,255,.3);
-        box-shadow: 0 7.5px 20px -5px rgba(0,0,0,.5);
-        border-radius: 30px;
-        background: #445;
-        transition: all .2s ease .1s;
-        &.active {
-          transition: all .2s ease;
-          background: #282830;
-        }
-        input {
-          color: white;
-          font-size: 1.15rem;
-        }
+    }
+    .input__wrapper {
+      margin: 5px 20px;
+      padding: 15px 25px;
+      border: 1px solid rgba(255,255,255,.3);
+      box-shadow: 0 7.5px 20px -5px rgba(0,0,0,.5);
+      border-radius: 30px;
+      background: #445;
+      transition: all .2s ease .1s;
+      &.active {
+        transition: all .2s ease;
+        background: #282830;
+      }
+      input {
+        color: white;
+        font-size: 1.15rem;
       }
     }
-    .loginLogoutButton {
+    .buttons__group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .button {
       width: 100px;
       height: 50px;
+      margin: 0 10px;
       border-radius: 30px;
       font-weight: 500;
       box-shadow: 0 10px 40px -5px rgba(0,0,0,.2);
@@ -194,6 +219,43 @@ div {
       user-select: none;
       &.disabled {
         background: #AAA;
+      }
+      &__signup {
+        font-weight: 600;
+        &.input__wrapper {
+          width: 100vw;
+          border-radius: 0;
+          &:active {
+            background: #282830;
+          }
+          &.active {
+            height: 80px;
+          }
+          input::placeholder {
+            font-size: .8em;
+          }
+        }
+        .button__icon {
+          margin: 0 50px;
+          opacity: .9;
+          transition: all .1s linear;
+          &:hover {
+            opacity: 1;
+            transform: scale(1.05);
+          }
+          &.cancel {
+            width: 20px;
+          }
+          &.confirm {
+            width: 27.5px;
+          }
+          &.disabled {
+            opacity: .25;
+            &:hover {
+              transform: none;
+            }
+          }
+        }
       }
       &:hover {
         box-shadow: 0 2.5px 5px rgba(0,0,0,.1);

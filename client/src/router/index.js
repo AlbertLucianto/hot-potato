@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import LoginPage from '@/components/LoginPage';
+import AccountPage from '@/components/AccountPage';
 import NewPotato from '@/components/NewPotato';
 import ReceivedPage from '@/components/ReceivedPage';
 import SentPage from '@/components/SentPage';
@@ -11,7 +11,7 @@ const routes = [
   {
     path: '/account',
     name: 'Account',
-    component: LoginPage,
+    component: AccountPage,
   },
   {
     path: '/new',
