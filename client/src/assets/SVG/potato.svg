@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 29.89 42.62">
+<defs>
+<style>
+.cls-1{fill:url(#linear-gradient);}.cls-2{fill:#e5901a;}</style>
+<linearGradient id="linear-gradient" x1="14.94" y1="11.74" x2="14.94" y2="53.93" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#845c28"/>
+<stop offset="1" stop-color="#ff3b30"/>
+</linearGradient>
+</defs>
+<title>
+potato</title>
+<g id="Layer_2" data-name="Layer 2">
+<g id="Layer_1-2" data-name="Layer 1">
+<path class="cls-1" d="M13.16,42.24C-2,41.88-.21,29.07.39,20.9S7.67.23,15,0,28.19,4.89,28,13.86s3.34,11.69,1.31,21.34S17.93,42.36,13.16,42.24Z"/>
+<circle class="cls-2" cx="25.09" cy="26.59" r="1.01"/>
+<circle class="cls-2" cx="14.94" cy="23.35" r="0.79"/>
+<circle class="cls-2" cx="20.98" cy="17.99" r="1.49"/>
+<circle class="cls-2" cx="20.18" cy="8.93" r="0.79"/>
+</g>
+</g>
+</svg>
