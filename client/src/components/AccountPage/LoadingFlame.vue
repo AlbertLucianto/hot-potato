@@ -24,10 +24,11 @@
 <style lang="scss" scoped>
 .mo-fire {
   width: 200px;
+  max-width: 50vw;
   height: auto;
   position: absolute;
-  left:50%;
-  margin-left: -110px;
+  left: 50%;
+  margin-left: -105px;
   top: 75px;
   transform: translateY(-60px);
 }

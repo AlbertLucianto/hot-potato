@@ -1,5 +1,6 @@
 <template>
-  <div class="loginPage__container" :class="{ loading }">
+  <div class="accountPage__container" :class="{ loading }">
+    <div class="account__notification" :class="{ show: notification }">{{ notification }}</div>
     <div class="flame__container">
       <loading-flame/>
     </div>
@@ -20,14 +21,14 @@
       </div>
       <div class="buttons__container">
         <div class="button" :class="{ disabled: loading }" v-if="!!userId" @mousedown="logoutUser">Logout</div>
-        <div class="buttons__group" v-if="!userId">
+        <div class="buttons__group" :class="{ disabled: !email || !password }" v-if="!userId">
           <div class="button button__login" v-if="!signingUp" :class="{ disabled: loading }" @mousedown="authenticateUser">Login</div>
-          <div class="button button__signup" :class="{ disabled: loading, input__wrapper: signingUp, active: active === 2 }" @mousedown="signupUser">
+          <div class="button button__signup" :class="{ disabled: loading, input__wrapper: signingUp, active: active === 2 }" @mousedown="signup">
             <div v-if="!signingUp">Signup</div>
             <img v-if="signingUp" src="../../assets/SVG/cross.svg" class="button__icon cancel" @click="cancelSignup"/>
             <input v-if="signingUp" v-model="nickname" placeholder="What should we call you with?"
-            @focus="setActive(2)" @blur="setActive(-1)"/>
-            <img v-if="signingUp" src="../../assets/SVG/tick.svg" class="button__icon confirm" :class="{ disabled: !nickname }"/>
+              @focus="setActive(2)" @blur="setActive(-1)" :class="{ inactive: active !== 2 }"/>
+            <img v-if="signingUp" src="../../assets/SVG/tick.svg" class="button__icon confirm" :class="{ disabled: !nickname }" @mousedown="signupUser"/>
           </div>
         </div>
       </div>
@@ -55,6 +56,7 @@ export default {
       active: -1,
       loading: 0,
       signingUp: false,
+      notification: '',
     };
   },
   apollo: {
@@ -99,11 +101,13 @@ export default {
         },
       }).then((res) => {
         localStorage.setItem('AUTH_TOKEN', res.data.authenticateUser.token);
-        location.reload();
         this.loading -= 1;
+        location.reload();
       }).catch((err) => {
         /* eslint-disable no-console */
         console.log(err);
+        const messageAr = err.message.split('error: ');
+        this.notification = messageAr[2];
         this.loading -= 1;
       });
     },
@@ -112,11 +116,39 @@ export default {
       localStorage.removeItem('AUTH_TOKEN');
       location.reload();
     },
-    signupUser() {
+    signup() {
       if (!this.signingUp) {
         this.signingUp = true;
       } else { // Confirm
       }
+    },
+    signupUser() {
+      if (this.loading) return;
+      this.loading += 1;
+      const { email, password, nickname } = this;
+      this.$apollo.mutate({
+        mutation: gql`mutation ( $nickname: String!, $email: String!, $password: String!) {
+          signupUser(name: $nickname, email: $email, password: $password) {
+            id
+            token
+          }
+        }`,
+        variables: {
+          email,
+          password,
+          nickname,
+        },
+      }).then((res) => {
+        localStorage.setItem('AUTH_TOKEN', res.data.signupUser.token);
+        this.loading -= 1;
+        location.reload();
+      }).catch((err) => {
+        /* eslint-disable no-console */
+        console.log(err);
+        const messageAr = err.message.split('error: ');
+        this.notification = messageAr[2];
+        this.loading -= 1;
+      });
     },
     cancelSignup() {
       this.nickname = '';
@@ -125,7 +157,9 @@ export default {
     listenEnterKey(e) {
       const code = e.which || e.keyCode;
       if (code === 13 && !this.userId) {
-        this.authenticateUser();
+        if (this.signingUp) {
+          if (this.nickname) this.signupUser();
+        } else if (this.email && this.password) this.authenticateUser();
       }
     },
   },
@@ -142,7 +176,7 @@ export default {
 div {
   box-sizing: border-box;
 }
-.loginPage__container {
+.accountPage__container {
   height: 100%;
   width: 100%;
   padding: 50px;
@@ -154,6 +188,22 @@ div {
   &.loading {
     background: #444;
     transition: background-color .3s ease;
+  }
+  .account__notification {
+    position: absolute;
+    top: -50px;
+    padding: 20px;
+    left: calc(50% - 150px);
+    width: 300px;
+    text-align: center;
+    transition: all .5s ease;
+    color: rgb(255,59,48);
+    font-size: 1.1rem;
+    text-shadow: 0 -5px 25px rgba(255,255,255,.5);
+    font-weight: 600;
+    &.show {
+      top: 0;
+    }
   }
   .detail {
     padding: 10px;
@@ -204,6 +254,11 @@ div {
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: opacity .2s ease;
+      &.disabled {
+        opacity: .6;
+        pointer-events: none;
+      }
     }
     .button {
       width: 100px;
@@ -221,12 +276,14 @@ div {
         background: #AAA;
       }
       &__signup {
+        background: rgba(255,204,0,.8);
         font-weight: 600;
         &.input__wrapper {
           width: 100vw;
           border-radius: 0;
+          box-shadow: 0 0 0 white;
           &:active {
-            background: #282830;
+            background: rgb(255,204,.8);
           }
           &.active {
             height: 80px;
@@ -234,9 +291,18 @@ div {
           input::placeholder {
             font-size: .8em;
           }
+          .inactive {
+            color: #282830;
+          }
+          &:hover {
+            box-shadow: 0 0 0 white;
+          }
+          input {
+            text-align: center;
+          }
         }
         .button__icon {
-          margin: 0 50px;
+          margin: 0 30px;
           opacity: .9;
           transition: all .1s linear;
           &:hover {
@@ -250,7 +316,8 @@ div {
             width: 27.5px;
           }
           &.disabled {
-            opacity: .25;
+            opacity: .35;
+            pointer-events: none;
             &:hover {
               transform: none;
             }
