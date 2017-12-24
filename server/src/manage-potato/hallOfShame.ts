@@ -31,7 +31,8 @@ export default async (event: FunctionEvent<IEventData>) => {
       shamefulUserCount[user.id].count++ :
       shamefulUserCount[user.id] = { count: 1, user });
 
-    const shamefulUserList = Object.keys(shamefulUserCount).map((key) => shamefulUserCount[key])
+    const shamefulUserList = Object.keys(shamefulUserCount)
+      .map((key) => shamefulUserCount[key])
       .sort((l, r) => l.count - r.count);
 
     return { data: ("length" in event.data && event.data.length < shamefulUserList.length) ?
