@@ -4,5 +4,7 @@ type HallOfShamePayload {
 }
 
 extend type Query {
-  hallOfShame: [HallOfShamePayload!]!
+  hallOfShame(
+    length: Int
+  ): [HallOfShamePayload!]!
 }

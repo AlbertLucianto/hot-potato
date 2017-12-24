@@ -1,18 +1,22 @@
 import { fromEvent, FunctionEvent } from "graphcool-lib";
 import { GraphQLClient } from "graphql-request";
 
+interface IEventData {
+  length: number;
+}
+
 interface IHolder {
   user: {
-    id: string,
-    name: string,
-    email: string,
-    createdAt: Date,
+    id: string;
+    name: string;
+    email: string;
+    createdAt: Date;
   };
 }
 
 interface IHolders extends Array<IHolder> {}
 
-export default async (event: FunctionEvent<{}>) => {
+export default async (event: FunctionEvent<IEventData>) => {
   console.log(event);
 
   try {
@@ -30,7 +34,8 @@ export default async (event: FunctionEvent<{}>) => {
     const shamefulUserList = Object.keys(shamefulUserCount).map((key) => shamefulUserCount[key])
       .sort((l, r) => l.count - r.count);
 
-    return { data: shamefulUserList };
+    return { data: ("length" in event.data && event.data.length < shamefulUserList.length) ?
+      shamefulUserList.slice(0, event.data.length) : shamefulUserList };
   } catch (e) {
     console.log(e);
     return { error: "An unexpected error occured during hallOfShame" };
