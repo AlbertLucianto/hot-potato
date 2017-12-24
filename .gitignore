@@ -57,3 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
+
+# local config file for Apollo Client
+client/config/apollo.config.js
+
+# development cluster
+server/.graphcoolrc

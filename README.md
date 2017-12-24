@@ -30,8 +30,8 @@
 
 1. Set `server` as current working directory.
 2. Ensure docker is installed on the machine. Run it.
-3. Install graphcool-cli with `npm install -g graphcool`.
-4. Run `gc local up <any_name_for_cluster>`. It will create three docker containers, including MySQL database.
+3. Install graphcool-cli with `npm install -g graphcool@next`.
+4. Run `gc local up --name <any_name_for_cluster>`. It will create three docker containers, including MySQL database.
 5. Run `gc deploy`.
 6. **If `.graphcoolrc` file is not yet there, it will ask you to choose a cluster, and automatically create the file. Else, delete `.graphcoolrc` file as it may fail the setup**
 
