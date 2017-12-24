@@ -20,7 +20,7 @@ permissions:
   # - operation: Potato.update
   #   authenticated: true
   - operation: User.read
-    authenticated: true
+    authenticated: false
     fields: [id, name, createdAt, email, holdings]
   - operation: User.update
     authenticated: true
