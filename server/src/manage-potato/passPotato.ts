@@ -104,7 +104,7 @@ async function isHolding(api: GraphQLClient, userId: string, potatoId: string): 
   };
 
   return api.request<{ lastPotatoHolder: IUser }>(query, variables)
-    .then((r) => !r.lastPotatoHolder || r.lastPotatoHolder.id === userId);
+    .then((r) => !r.lastPotatoHolder.id || r.lastPotatoHolder.id === userId);
 }
 
 async function isPotatoDropped(api: GraphQLClient, potatoId: string): Promise<boolean> {
