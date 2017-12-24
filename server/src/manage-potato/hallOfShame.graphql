@@ -1,0 +1,8 @@
+type HallOfShamePayload {
+  count: Int!
+  user: Json! # Solution for now: https://github.com/graphcool/framework/issues/318
+}
+
+extend type Query {
+  hallOfShame: [HallOfShamePayload!]!
+}

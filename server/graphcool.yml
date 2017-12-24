@@ -75,3 +75,8 @@ functions:
     handler:
       code: src/manage-potato/lastPotatoHolder.ts
 
+  hallOfShame:
+    type: resolver
+    schema: src/manage-potato/hallOfShame.graphql
+    handler:
+      code: src/manage-potato/hallOfShame.ts
