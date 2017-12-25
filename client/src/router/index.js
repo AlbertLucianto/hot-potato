@@ -7,7 +7,7 @@ import SentPage from '@/components/SentPage';
 
 Vue.use(Router);
 
-const routes = [
+const mainRoutes = [
   {
     path: '/account',
     name: 'Account',
@@ -30,9 +30,18 @@ const routes = [
   },
 ];
 
-routes.forEach((route, idx) => { routes[idx].props = { idx }; });
+const redirects = [
+  {
+    path: '/',
+    redirect: '/new',
+  },
+];
 
-export { routes };
+mainRoutes.forEach((route, idx) => { mainRoutes[idx].props = { idx }; });
+
+const routes = [...redirects, ...mainRoutes];
+
+export { mainRoutes as routes };
 
 export default new Router({
   routes,
