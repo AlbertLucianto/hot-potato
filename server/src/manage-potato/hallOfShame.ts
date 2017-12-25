@@ -69,5 +69,5 @@ async function getAllDroppedPotatoes(api: GraphQLClient, currentTime: Date) {
 
   return api.request<{ allPotatoes: Array<{ holders: IHolders }> }>(query, variables)
     .then((r) => r.allPotatoes.filter((potato) => potato.holders.length > 0)
-      .map((potato) => ({...potato.holders[0].user })));
+      .map((potato) => ({ ...potato.holders[0].user })));
 }
