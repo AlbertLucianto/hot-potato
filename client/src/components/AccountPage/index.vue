@@ -128,7 +128,7 @@ export default {
       this.loading += 1;
       const { email, password, nickname } = this;
       this.$apollo.mutate({
-        mutation: gql`mutation ( $nickname: String!, $email: String!, $password: String!) {
+        mutation: gql`mutation signUp($nickname: String!, $email: String!, $password: String!) {
           signupUser(name: $nickname, email: $email, password: $password) {
             id
             token

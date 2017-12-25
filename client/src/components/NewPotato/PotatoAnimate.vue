@@ -24,8 +24,15 @@ const DRAGGING_POTATO_WIDTH = 120;
 const DAMP_POSITIVE_Y_DRAG = 4;
 const DAMP_NEGATIVE_Y_DRAG = 1.5;
 const DAMP_X_DRAG = 5;
+const EXIT_POSITION = 600;
 
 export default {
+  props: {
+    passPosition: Number,
+    send: Function,
+    canSend: Boolean,
+    remindInput: Function,
+  },
   data() {
     return {
       start: { x: 0, y: 0 },
@@ -63,18 +70,33 @@ export default {
         this.pos.y = evt.pageY - this.start.y;
       }
     },
-    onRelease() {
+    onRelease(e) {
       if (this.dragging) {
+        const evt = e.changedTouches ? e.changedTouches[0] : e;
         this.dragging = false;
-        dynamics.animate(this.pos, {
-          x: 0,
-          y: 0,
-        }, {
-          type: dynamics.spring,
-          duration: 1000,
-          frequency: 300,
-          friction: 300,
-        });
+        if (evt.pageY > this.passPosition || !this.canSend) { // Does not send
+          if (!this.canSend) this.remindInput();
+          dynamics.animate(this.pos, {
+            x: 0,
+            y: 0,
+          }, {
+            type: dynamics.spring,
+            duration: 1000,
+            frequency: 300,
+            friction: 300,
+          });
+        } else {
+          dynamics.animate(this.pos, {
+            x: 0,
+            y: this.pos.y - EXIT_POSITION,
+          }, {
+            type: dynamics.spring,
+            duration: 1000,
+            frequency: 300,
+            friction: 300,
+          });
+          this.send();
+        }
         window.removeEventListener('mousemove', this.onDrag);
         window.removeEventListener('mouseup', this.onRelease);
         window.removeEventListener('touchmove', this.onDrag);

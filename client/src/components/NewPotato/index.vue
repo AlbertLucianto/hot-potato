@@ -1,12 +1,12 @@
 <template>
-<div class="newPotatoPage__container">
+<div class="newPotatoPage__container" ref="container">
   <div class="heat__wrapper">
     <div class="heat__gradient" :style="gradientStyle"/>
   </div>
   <transition
-    enter-active-class="animated bounceIn potatoAnimate"
-    leave-active-class="animated bounceOut">
-    <potato-animate v-if="showPotato" :class="{ blur: searching }"/>
+    enter-active-class="animated bounceIn potatoAnimate">
+    <potato-animate v-if="showPotato" :class="{ blur: searching }" :passPosition="passPosition"
+      :send="deployAndPassPotato" :canSend="!!selectedUser" :remindInput="emphasizeSearchInput"/>
   </transition>
   <temperature-setting :setTemperature="setTemperature" :class="{ blur: searching }"/>
   <div class="overlaySearching" v-if="searching">
@@ -18,7 +18,7 @@
       <img class="loadingIcon" src="../../assets/SVG/loading-cylon.svg" v-if="loading"/>
     </div>
   </div>
-  <div class="input__wrapper" :class="{ searching, selected: !!selectedUser  }">
+  <div class="input__wrapper" :class="{ searching, selected: !!selectedUser, emphasized }">
     <img class="cancel__button" src="../../assets/SVG/cross_dark.svg" v-if="searching" @click="cancelSearch"/>
     <input v-model="search" placeholder="Whom to pass?" :class="{ searching }" @focus="setSearching"/>
     <div class="selectedUser__email" v-if="selectedUser && !searching">{{ selectedUser.email }}</div>
@@ -34,6 +34,9 @@ import TemperatureSetting from './TemperatureSetting';
 
 const SEARCH_PAGE_SIZE = 5;
 const TYPING_TIMEOUT_TIME = 300;
+const PASS_TRESHOLD = 100;
+
+const temperatureToDuration = temp => parseInt((320 - temp) / 10, 10);
 
 export default {
   components: {
@@ -50,6 +53,8 @@ export default {
       typing: false,
       typingTimeout: undefined,
       selectedUser: undefined,
+      passPosition: 0,
+      emphasized: false,
     };
   },
   computed: {
@@ -112,9 +117,51 @@ export default {
       this.search = user.name;
       this.searching = false;
     },
+    deployAndPassPotato() {
+      if (this.loading) return;
+      this.loading += 1;
+      this.$apollo.mutate({
+        mutation: gql`mutation createPotato($duration: Int!) {
+          deployPotato(duration: $duration) {
+            id
+          }
+        }`,
+        variables: {
+          duration: temperatureToDuration(this.temperature),
+        },
+      }).then((resDeploy) => {
+        this.loading -= 1;
+        console.log(resDeploy);
+        const potatoId = resDeploy.data.deployPotato.id;
+        this.showPotato = false;
+        this.$apollo.mutate({
+          mutation: gql`mutation sendPotato($potatoId: ID!, $receiverId: ID!) {
+            passPotato(potatoId: $potatoId, receiverId: $receiverId) {
+              id
+            }
+          }`,
+          variables: {
+            potatoId,
+            receiverId: this.selectedUser.id,
+          },
+        }).then((resPass) => {
+          this.showPotato = true;
+          console.log(resPass);
+        });
+      });
+    },
+    emphasizeSearchInput() {
+      this.emphasized = true;
+      setTimeout(() => {
+        this.emphasized = false;
+      }, 200);
+    },
   },
   mounted() {
     this.showPotato = true;
+    this.$nextTick(() => {
+      this.passPosition = this.$refs.container.getBoundingClientRect().top + PASS_TRESHOLD;
+    });
   },
 };
 </script>
@@ -181,6 +228,10 @@ div {
       input {
         color: $darkOrange;
       }
+    }
+    &.emphasized {
+      transition: transform .2s ease;
+      transform: scale(1.2) rotate(-2deg);
     }
     input {
       text-align: center;
