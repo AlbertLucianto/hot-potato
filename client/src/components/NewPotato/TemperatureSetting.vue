@@ -20,6 +20,9 @@ const MIN_TEMPERATURE = 50;
 const MAX_TEMPERATURE = 200;
 
 export default {
+  props: {
+    setTemperature: Function,
+  },
   data() {
     return {
       height: INIT_HEIGHT,
@@ -62,6 +65,7 @@ export default {
     onRelease() {
       if (this.dragging) {
         this.dragging = false;
+        this.setTemperature(this.temperature);
         window.removeEventListener('mousemove', this.onDrag);
         window.removeEventListener('mouseup', this.onRelease);
         window.removeEventListener('touchmove', this.onDrag);
@@ -71,24 +75,30 @@ export default {
   },
   mounted() {
     this.stickHeight = this.$refs.stick.getBoundingClientRect().height;
+    this.$nextTick(() => {
+      this.setTemperature(this.temperature);
+    });
   },
 };
 </script>
 
 <style lang="scss" scoped>
-$red: rgb(255,45,85);
-$pink: rgb(255,59,48);
+$pink: rgb(255,45,85);
+$red: rgb(255,59,48);
 $purple: rgb(88,86,214);
 $orange: rgb(255,149,0);
 $darkOrange: rgb(245,140,0);
 
 .thermo__container {
   position: absolute;
-  bottom: 30%;
-  right: 40px;
-  height: 40%;
+  bottom: 35%;
+  left: 60px;
+  height: 35%;
   width: 50px;
   cursor: -webkit-grab;
+  &:hover .thermo__stick {
+    box-shadow: 0 5px 30px -5px $pink;
+  }
   .thermo__circle {
     position: absolute;
     width: 40px;
@@ -108,14 +118,15 @@ $darkOrange: rgb(245,140,0);
     border: 2.5px solid $darkOrange;
     border-radius: 30px;
     box-shadow: 0 5px 30px -5px rgba(0,0,0,.5);
+    transition: all .2s ease;
     .thermo__level {
       position: absolute;
       bottom: 0;
       height: 25%;
       width: 20px;
       background-color: $darkOrange;
-      border-top: 8px solid $red;
-      box-shadow: 10px 0 30px -10px $pink inset;
+      border-top: 8px solid $pink;
+      box-shadow: 10px 0 30px -10px $red inset;
       .glare {
         position: absolute;
         background-color: white;
@@ -130,9 +141,9 @@ $darkOrange: rgb(245,140,0);
   }
   .thermo__value {
     position: absolute;
-    width: 50px;
+    width: 60px;
+    left: 0;
     bottom: -50px;
-    right: -2px;
     font-size: 1.6rem;
     font-weight: 600;
     color: white;

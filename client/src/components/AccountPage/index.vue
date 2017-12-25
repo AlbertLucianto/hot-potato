@@ -77,6 +77,7 @@ export default {
         skip() {
           return !this.userId;
         },
+        fetchPolicy: 'cache-and-network',
       };
     },
   },

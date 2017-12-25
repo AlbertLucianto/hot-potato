@@ -19,7 +19,7 @@
 <script>
 import dynamics from 'dynamics.js';
 
-const START_POTATO_WIDTH = 150;
+const START_POTATO_WIDTH = 180;
 const DRAGGING_POTATO_WIDTH = 120;
 const DAMP_POSITIVE_Y_DRAG = 4;
 const DAMP_NEGATIVE_Y_DRAG = 1.5;
@@ -88,13 +88,18 @@ export default {
 <style lang="scss" scoped>
 .potato {
   transition: width .5s ease;
-  margin-right: 60px;
+  margin-left: 100px;
+  margin-top: 180px;
   .body {
     fill: url(#linear-gradient);
     cursor: grab;
     transform-origin: center;
+    transition: transform .25s ease;
     &.dragging {
       animation: potato-dragging .15s linear alternate infinite;
+    }
+    &:hover {
+      transform: scale(.95);
     }
   }
   .spot{
