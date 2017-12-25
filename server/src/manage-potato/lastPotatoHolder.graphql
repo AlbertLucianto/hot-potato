@@ -1,5 +1,5 @@
 type LastHeldPayload {
-  id: ID!
+  id: ID
 }
 
 extend type Query {
