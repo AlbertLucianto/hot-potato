@@ -1,10 +1,10 @@
 <template>
-<svg class="potato" :width="width" viewBox="0 0 30 45" :style="potatoStyle">
+<svg class="potato" viewBox="0 0 30 45" :style="potatoStyle">
   <linearGradient id="linear-gradient" x1="14.94" y1="11.74" x2="14.94" y2="53.93" gradientUnits="userSpaceOnUse">
     <stop offset="0" stop-color="#845c28"/>
     <stop offset="1" stop-color="#ff3b30"/>
   </linearGradient>
-  <path class="body" @mousedown="startDrag"
+  <path class="body" @mousedown="startDrag" :class="{ dragging }"
     d="M13.16,42.24C-2,41.88-.21,29.07.39,20.9S7.67.23,15,0,28.19,4.89,28,13.86s3.34,11.69,1.31,21.34S17.93,42.36,13.16,42.24Z"/>
   <g class="spots__group">
     <circle class="spot" cx="5" cy="20" r="0.8"/>
@@ -20,6 +20,7 @@
 import dynamics from 'dynamics.js';
 
 const START_POTATO_WIDTH = 150;
+const DRAGGING_POTATO_WIDTH = 120;
 const DAMP_POSITIVE_Y_DRAG = 4;
 const DAMP_NEGATIVE_Y_DRAG = 1.5;
 const DAMP_X_DRAG = 5;
@@ -27,7 +28,6 @@ const DAMP_X_DRAG = 5;
 export default {
   data() {
     return {
-      width: START_POTATO_WIDTH,
       start: { x: 0, y: 0 },
       pos: { x: 0, y: 0 },
       dragging: false,
@@ -40,6 +40,7 @@ export default {
       const y = posY > 0 ? posY / DAMP_POSITIVE_Y_DRAG : posY / DAMP_NEGATIVE_Y_DRAG;
       return {
         transform: `translate(${x}px, ${y}px)`,
+        width: `${this.dragging ? DRAGGING_POTATO_WIDTH : START_POTATO_WIDTH}px`,
       };
     },
   },
@@ -86,10 +87,15 @@ export default {
 
 <style lang="scss" scoped>
 .potato {
-  transition: width 1s ease;
+  transition: width .5s ease;
+  margin-right: 60px;
   .body {
     fill: url(#linear-gradient);
     cursor: grab;
+    transform-origin: center;
+    &.dragging {
+      animation: potato-dragging .15s linear alternate infinite;
+    }
   }
   .spot{
     fill: #e5901a;
@@ -102,6 +108,14 @@ export default {
 @keyframes spots {
   100% {
     transform: translateX(2.5px);
+  }
+}
+@keyframes potato-dragging {
+  0% {
+    transform: scale(.95) rotate(-2.5deg);
+  }
+  100% {
+    transform: scale(.95) rotate(2.5deg);
   }
 }
 </style>

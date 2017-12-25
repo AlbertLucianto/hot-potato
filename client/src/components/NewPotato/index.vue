@@ -1,15 +1,30 @@
 <template>
 <div class="newPotatoPage__container">
-  <potato-animate/>
+  <transition
+    enter-active-class="animated bounceIn potatoAnimate"
+    leave-active-class="animated bounceOut">
+    <potato-animate v-if="showPotato"/>
+  </transition>
+  <temperature-setting/>
 </div>
 </template>
 
 <script>
 import PotatoAnimate from './PotatoAnimate';
+import TemperatureSetting from './TemperatureSetting';
 
 export default {
   components: {
     PotatoAnimate,
+    TemperatureSetting,
+  },
+  data() {
+    return {
+      showPotato: false,
+    };
+  },
+  mounted() {
+    this.showPotato = true;
   },
 };
 </script>
@@ -26,5 +41,8 @@ div {
   display: flex;
   justify-content: center;
   align-items: center;
+  .potatoAnimate {
+    animation-duration: .6s;
+  }
 }
 </style>

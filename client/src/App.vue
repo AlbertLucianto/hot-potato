@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import 'animate.css';
 import gql from 'graphql-tag';
 
 import RevolverNav from '@/components/RevolverNav';
