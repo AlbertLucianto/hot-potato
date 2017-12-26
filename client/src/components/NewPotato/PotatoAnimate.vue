@@ -1,5 +1,5 @@
 <template>
-<svg class="potato" viewBox="0 0 30 45" :style="potatoStyle">
+<svg class="potato" viewBox="0 0 30 45" :style="potatoStyle" :class="{ inFront: canSend }">
   <linearGradient id="linear-gradient" x1="14.94" y1="11.74" x2="14.94" y2="53.93" gradientUnits="userSpaceOnUse">
     <stop offset="0" stop-color="#845c28"/>
     <stop offset="1" stop-color="#ff3b30"/>
@@ -23,7 +23,7 @@ const START_POTATO_WIDTH = 180;
 const DRAGGING_POTATO_WIDTH = 120;
 const DAMP_POSITIVE_Y_DRAG = 4;
 const DAMP_NEGATIVE_Y_DRAG = 1.5;
-const DAMP_X_DRAG = 5;
+const DAMP_X_DRAG = 10;
 const EXIT_POSITION = 600;
 
 export default {
@@ -44,10 +44,12 @@ export default {
     potatoStyle() {
       const x = this.pos.x / DAMP_X_DRAG;
       const posY = this.pos.y;
-      const y = posY > 0 ? posY / DAMP_POSITIVE_Y_DRAG : posY / DAMP_NEGATIVE_Y_DRAG;
+      const dampY = this.canSend ? 1 : DAMP_NEGATIVE_Y_DRAG;
+      const y = posY > 0 ? posY / DAMP_POSITIVE_Y_DRAG : posY / dampY;
       return {
         transform: `translate(${x}px, ${y}px)`,
         width: `${this.dragging ? DRAGGING_POTATO_WIDTH : START_POTATO_WIDTH}px`,
+        'margin-right': `${this.dragging ? 30 : 0}px`,
       };
     },
   },
@@ -64,6 +66,7 @@ export default {
       window.addEventListener('touchend', this.onRelease);
     },
     onDrag(e) {
+      e.stopPropagation();
       if (this.dragging) {
         const evt = e.changedTouches ? e.changedTouches[0] : e;
         this.pos.x = evt.pageX - this.start.x;
@@ -71,6 +74,7 @@ export default {
       }
     },
     onRelease(e) {
+      e.stopPropagation();
       if (this.dragging) {
         const evt = e.changedTouches ? e.changedTouches[0] : e;
         this.dragging = false;
@@ -109,9 +113,9 @@ export default {
 
 <style lang="scss" scoped>
 .potato {
-  transition: width .5s ease;
-  margin-left: 100px;
-  margin-top: 180px;
+  transition: width .5s ease, margin-right .5s ease;
+  margin-top: 20px;
+  &.inFront { z-index: 5; }
   .body {
     fill: url(#linear-gradient);
     cursor: grab;
