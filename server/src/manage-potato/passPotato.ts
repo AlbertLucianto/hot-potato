@@ -65,7 +65,7 @@ export default async (event: FunctionEvent<IEventData>) => {
     // Add to list of holders in the potato
     const { id, sequence } = await passPotato(api, potatoId, receiverId);
 
-    const droppedDate = await updateDroppedDate(api, potatoId);
+    const droppedDate = await updateDroppedDate(api, potatoId, receiverId);
 
     return { data: { id, droppedDate, sequence } };
   } catch (e) {
@@ -93,8 +93,10 @@ async function getUser(api: GraphQLClient, receiverId: string): Promise<{ User }
 async function isHolding(api: GraphQLClient, userId: string, potatoId: string): Promise<boolean> {
   const query = `
     query isHolding($potatoId: ID!) {
-      lastPotatoHolder(potatoId: $potatoId) {
-        id
+      Potato(id: $potatoId) {
+        lastHeldBy {
+          id
+        }
       }
     }
   `;
@@ -103,8 +105,8 @@ async function isHolding(api: GraphQLClient, userId: string, potatoId: string): 
     potatoId,
   };
 
-  return api.request<{ lastPotatoHolder: IUser }>(query, variables)
-    .then((r) => !r.lastPotatoHolder.id || r.lastPotatoHolder.id === userId);
+  return api.request<{ Potato: { lastHeldBy: IUser } }>(query, variables)
+    .then((r) => !r.Potato.lastHeldBy || r.Potato.lastHeldBy.id === userId);
 }
 
 async function isPotatoDropped(api: GraphQLClient, potatoId: string): Promise<boolean> {
@@ -188,6 +190,7 @@ async function passPotato(api: GraphQLClient, potatoId: string, receiverId: stri
 async function updateDroppedDate(
   api: GraphQLClient,
   potatoId: string,
+  receiverId: string,
 ): Promise<string> {
 
   const { duration } = await api.request<{ Potato: IPotato }>(`
@@ -202,8 +205,8 @@ async function updateDroppedDate(
   const newDroppedDate = new Date(new Date().setTime(new Date().getTime() + duration * 60 * 60 * 1000)).toISOString();
 
   const mutation = `
-    mutation updateDroppedDate($potatoId: ID!, $droppedDate: DateTime!) {
-      updatePotato(id: $potatoId, droppedDate: $droppedDate) {
+    mutation updateDroppedDate($potatoId: ID!, $droppedDate: DateTime!, $receiverId: ID!) {
+      updatePotato(id: $potatoId, droppedDate: $droppedDate, lastHeldById: $receiverId) {
         id
         droppedDate
       }
@@ -213,6 +216,7 @@ async function updateDroppedDate(
   const variables = {
     droppedDate: newDroppedDate,
     potatoId,
+    receiverId,
   };
 
   return api.request<{ updatePotato: IPotato }>(mutation, variables)

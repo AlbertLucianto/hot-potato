@@ -69,14 +69,14 @@ functions:
     handler:
       code: src/manage-potato/passPotato.ts
 
-  lastPotatoHolder:
-    type: resolver
-    schema: src/manage-potato/lastPotatoHolder.graphql
-    handler:
-      code: src/manage-potato/lastPotatoHolder.ts
-
   hallOfShame:
     type: resolver
     schema: src/manage-potato/hallOfShame.graphql
     handler:
       code: src/manage-potato/hallOfShame.ts
+
+  receivedPotato:
+    type: resolver
+    schema: src/manage-potato/receivedPotato.graphql
+    handler:
+      code: src/manage-potato/receivedPotato.ts

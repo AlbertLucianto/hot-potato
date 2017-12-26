@@ -1,0 +1,11 @@
+type PotatoPayload {
+  id: ID!
+  droppedDate: DateTime!
+}
+
+extend type Query {
+  receivedPotato(
+    filterDropped: Boolean
+    currentlyHold: Boolean
+  ): [PotatoPayload!]!
+}
