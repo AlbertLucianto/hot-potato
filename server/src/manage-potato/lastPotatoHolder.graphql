@@ -1,9 +1,0 @@
-type LastHeldPayload {
-  id: ID
-}
-
-extend type Query {
-  lastPotatoHolder(
-    potatoId: ID!
-  ): LastHeldPayload
-}
