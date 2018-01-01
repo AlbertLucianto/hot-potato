@@ -42,13 +42,13 @@ async function getListPotato(
   const query = `
     query getListPotato(
       $userId: ID!,
-      ${filterDropped ? "$currentDate: Date!" : ""}
+      ${filterDropped ? "$currentDate: DateTime!" : ""}
     ) {
       allHolders(filter: {
         user: { id: $userId },
         potato: {
-          ${filterDropped ? `droppedDate_lt: $currentDate,` : ""}
-          ${currentlyHold ? `lastHeldBy: $userId` : ""}
+          ${filterDropped ? "droppedDate_lt: $currentDate," : ""}
+          ${currentlyHold ? "lastHeldBy: { id: $userId }" : ""}
         }
       }) {
         potato {
@@ -59,7 +59,11 @@ async function getListPotato(
     }
   `;
 
-  const variables: { currentDate?: string } = {};
+  const variables: {
+    currentDate?: string,
+    userId: string,
+  } = { userId };
+
   if (filterDropped) {
     variables.currentDate = new Date().toISOString();
   }
