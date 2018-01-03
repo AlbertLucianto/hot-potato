@@ -8,6 +8,7 @@ interface IEventData {
 
 interface IHolder {
   potato: { id: string, droppedDate: string };
+  passedFrom: { id: string, name: string, email: string };
 }
 
 export default async (event: FunctionEvent<IEventData>) => {
@@ -55,6 +56,11 @@ async function getListPotato(
           id
           droppedDate
         }
+        passedFrom {
+          id
+          name
+          email
+        }
       }
     }
   `;
@@ -69,5 +75,5 @@ async function getListPotato(
   }
 
   return api.request<{ allHolders: [IHolder] }>(query, variables)
-    .then((res) => res.allHolders.map((holder) => holder.potato));
+    .then((res) => res.allHolders);
 }

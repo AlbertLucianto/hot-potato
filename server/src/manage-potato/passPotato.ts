@@ -63,7 +63,7 @@ export default async (event: FunctionEvent<IEventData>) => {
     }
 
     // Add to list of holders in the potato
-    const { id, sequence } = await passPotato(api, potatoId, receiverId);
+    const { id, sequence } = await passPotato(api, potatoId, receiverId, userId);
 
     const droppedDate = await updateDroppedDate(api, potatoId, receiverId);
 
@@ -150,7 +150,12 @@ async function hadReceived(api: GraphQLClient, receiverId: string, potatoId: str
     .then((r) => !!r.Potato.holders.length);
 }
 
-async function passPotato(api: GraphQLClient, potatoId: string, receiverId: string): Promise<IHolder> {
+async function passPotato(
+  api: GraphQLClient,
+  potatoId: string,
+  receiverId: string,
+  passedFromId: string,
+): Promise<IHolder> {
   const nextSequence = await api.request<{ allHolders: [IHolder] }>(`
     query lastSeq($potatoId: ID!) {
       allHolders(
@@ -169,8 +174,8 @@ async function passPotato(api: GraphQLClient, potatoId: string, receiverId: stri
     .then((r) => !r.allHolders[0] ? 0 : r.allHolders[0].sequence + 1);
 
   const mutation = `
-    mutation passPotato($potatoId: ID!, $receiverId: ID!, $sequence: Int!) {
-      createHolder(potatoId: $potatoId, userId: $receiverId, sequence: $sequence) {
+    mutation passPotato($potatoId: ID!, $receiverId: ID!, $sequence: Int!, $passedFromId: ID!) {
+      createHolder(potatoId: $potatoId, userId: $receiverId, sequence: $sequence, passedFromId: $passedFromId) {
         id
         sequence
       }
@@ -178,6 +183,7 @@ async function passPotato(api: GraphQLClient, potatoId: string, receiverId: stri
   `;
 
   const variables = {
+    passedFromId,
     potatoId,
     receiverId,
     sequence: nextSequence,

@@ -20,6 +20,7 @@ type User @model {
   createdPotatoes: [Potato!]! @relation(name: "UserCreatesPotato")
   holdings: [Holder!]! @relation(name: "UserHold")
   currentlyHold: [Potato!]! @relation(name: "LastHolder")
+  passes: [Holder!]! @relation(name: "UserPasses")
 }
 
 type Holder @model {
@@ -27,6 +28,7 @@ type Holder @model {
   createdAt: DateTime!
 
   user: User! @relation(name: "UserHold")
+  passedFrom: User! @relation(name: "UserPasses")
   potato: Potato! @relation(name: "PotatoHeld")
   sequence: Int! @default(value: 0)
 }

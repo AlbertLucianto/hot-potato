@@ -21,7 +21,7 @@ permissions:
   #   authenticated: true
   - operation: User.read
     authenticated: false
-    fields: [id, name, createdAt, email, holdings]
+    fields: [id, name, createdAt, email, holdings, passes]
   - operation: User.update
     authenticated: true
     query: src/permissions/models/User.graphql:isOwner

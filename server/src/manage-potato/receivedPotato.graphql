@@ -1,6 +1,6 @@
 type PotatoPayload {
-  id: ID!
-  droppedDate: DateTime!
+  potato: Json!
+  passedFrom: Json!
 }
 
 extend type Query {
