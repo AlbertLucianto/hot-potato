@@ -1,21 +1,25 @@
 <template>
 <div class="receivedList__container">
   <div v-for="(potato, idx) in receivedPotato" :key="potato.id" class="received__item">
-    <div v-if="categoryByDate(potato.droppedDate) === category.dropped" class="received__content">
+    <div v-if="categoryByDate(potato.potato) === category.dropped.name" class="received__content">
       <img class="potatoIcon" src="../../assets/SVG/list_dropped.svg"/>
-      <div class="content__text">{{ displayText(potato.droppedDate).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
     </div>
-    <div v-else-if="categoryByDate(potato.droppedDate) === category.relax" class="received__content">
+    <div v-else-if="categoryByDate(potato.potato) === category.relax.name" class="received__content">
       <img class="potatoIcon" src="../../assets/SVG/list_relax.svg"/>
-      <div class="content__text">{{ displayText(potato.droppedDate).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
     </div>
-    <div v-else-if="categoryByDate(potato.droppedDate) === category.medium" class="received__content">
+    <div v-else-if="categoryByDate(potato.potato) === category.medium.name" class="received__content">
       <img class="potatoIcon" src="../../assets/SVG/list_medium.svg"/>
-      <div class="content__text">{{ displayText(potato.droppedDate).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
     </div>
-    <div v-else-if="categoryByDate(potato.droppedDate) === category.urgent" class="received__content">
+    <div v-else-if="categoryByDate(potato.potato) === category.urgent.name" class="received__content">
       <img class="potatoIcon" src="../../assets/SVG/list_urgent.svg"/>
-      <div class="content__text">{{ displayText(potato.droppedDate).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).value }}</div>
+      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
     </div>
   </div>
 </div>
@@ -23,6 +27,8 @@
 
 <script>
 import gql from 'graphql-tag';
+
+const calcDiffTime = (ISODate) => (new Date(ISODate).getTime() - new Date().getTime()) / 1000;
 
 export default {
   props: {
@@ -32,40 +38,40 @@ export default {
     return {
       loading: 0,
       category: {
-        dropped: 'DROPPED',
-        relax: 'RELAX',
-        medium: 'MEDIUM',
-        urgent: 'URGENT',
+        dropped: { name: 'DROPPED', limit: 0 },
+        relax: { name: 'RELAX', limit: 7 * 24 * 3600 },
+        medium: { name: 'MEDIUM', limit: 24 * 3600 },
+        urgent: { name: 'URGENT', limit: 2 * 3600 },
       },
     };
   },
   computed: {
     categoryByDate() {
-      return (ISODate) => {
-        if (new Date(ISODate) < new Date()) return this.category.dropped;
-        else return this.category.medium;
+      return (potato) => {
+        const time = calcDiffTime(potato.droppedDate);
+        if (time < 0) return this.category.dropped.name;
+        if (time > this.category.relax.limit) return this.category.relax.name;
+        if (time > this.category.medium.limit) return this.category.medium.name;
+        else return this.category.urgent.name;
       };
     },
     displayText() {
-      return (ISODate) => {
-        if (new Date(ISODate) < new Date()) return {
-          value: `Dropped on ${new Date(ISODate).toDateString()}`,
-        };
-        const dayDiff = Math.floor((new Date(ISODate).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-        if (dayDiff >= 1) return {
-          value: dayDiff,
-          scale: `day${dayDiff > 1 ? 's' : ''}`,
-        };
-        const hourDiff = new Date(ISODate).getHours() - new Date().getHours();
-        if (hourDiff >= 1) return {
-          value: hourDiff,
-          scale: `hour${hourDiff > 1 ? 's' : ''}`,
-        };
-        const minDiff = new Date(ISODate).getMinutes() - new Date().getMinutes();
-        if (minDiff >= 0) return {
-          value: minDiff,
-          scale: `minute${minDiff > 1 ? 's' : ''}`,
-        };
+      return (potato) => {
+        const time = calcDiffTime(potato.droppedDate);
+        if (time < 0) return { value: `Dropped at ${new Date(potato.droppedDate).toDateString()}` };
+        if (time > 24 * 3600) {
+          const value = Math.floor(time / 24 / 3600);
+          return { value, scale: `day${value > 1 ? 's' : ''}` };
+        } else if (time > 3600) {
+          const value = Math.floor(time / 3600);
+          return { value, scale: `hour${value > 1 ? 's' : ''}` };
+        } else if (time > 60) {
+          const value = Math.floor(time / 60);
+          return { value, scale: `minute${value > 1 ? 's' : ''}` };
+        } else {
+          const value = Math.floor(time);
+          return { value, scale: `second${value > 1 ? 's' : ''}` };
+        }
       };
     }
   },
@@ -78,8 +84,8 @@ export default {
             currentlyHold: $currentlyHold,
             filterDropped: $filterDropped,
           ) {
-            id
-            droppedDate
+            potato
+            passedFrom
           }
         }`,
         variables() {
@@ -105,6 +111,7 @@ export default {
 .receivedList__container {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
   .received__item {
     width: 120px;
     height: 120px;
