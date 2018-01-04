@@ -1,23 +1,11 @@
 <template>
 <div class="receivedList__container">
   <div v-for="(potato, idx) in receivedPotato" :key="potato.id" class="received__item">
-    <div v-if="categoryByDate(potato.potato) === category.dropped.name" class="received__content">
-      <img class="potatoIcon" src="../../assets/SVG/list_dropped.svg"/>
-      <div class="content__text">{{ displayText(potato.potato).value }}</div>
-      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
-    </div>
-    <div v-else-if="categoryByDate(potato.potato) === category.relax.name" class="received__content">
-      <img class="potatoIcon" src="../../assets/SVG/list_relax.svg"/>
-      <div class="content__text">{{ displayText(potato.potato).value }}</div>
-      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
-    </div>
-    <div v-else-if="categoryByDate(potato.potato) === category.medium.name" class="received__content">
-      <img class="potatoIcon" src="../../assets/SVG/list_medium.svg"/>
-      <div class="content__text">{{ displayText(potato.potato).value }}</div>
-      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
-    </div>
-    <div v-else-if="categoryByDate(potato.potato) === category.urgent.name" class="received__content">
-      <img class="potatoIcon" src="../../assets/SVG/list_urgent.svg"/>
+    <div class="received__content">
+      <img class="potatoIcon" src="../../assets/SVG/list_dropped.svg" v-if="categoryByDate(potato.potato) === category.dropped.name"/>
+      <img class="potatoIcon" src="../../assets/SVG/list_relax.svg" v-else-if="categoryByDate(potato.potato) === category.relax.name"/>
+      <img class="potatoIcon" src="../../assets/SVG/list_medium.svg" v-else-if="categoryByDate(potato.potato) === category.medium.name"/>
+      <img class="potatoIcon" src="../../assets/SVG/list_urgent.svg" v-else-if="categoryByDate(potato.potato) === category.urgent.name"/>
       <div class="content__text">{{ displayText(potato.potato).value }}</div>
       <div class="content__text">{{ displayText(potato.potato).scale }}</div>
     </div>
@@ -28,7 +16,7 @@
 <script>
 import gql from 'graphql-tag';
 
-const calcDiffTime = (ISODate) => (new Date(ISODate).getTime() - new Date().getTime()) / 1000;
+const calcDiffTime = ISODate => (new Date(ISODate).getTime() - new Date().getTime()) / 1000;
 
 export default {
   props: {
@@ -52,7 +40,7 @@ export default {
         if (time < 0) return this.category.dropped.name;
         if (time > this.category.relax.limit) return this.category.relax.name;
         if (time > this.category.medium.limit) return this.category.medium.name;
-        else return this.category.urgent.name;
+        return this.category.urgent.name;
       };
     },
     displayText() {
@@ -62,18 +50,17 @@ export default {
         if (time > 24 * 3600) {
           const value = Math.floor(time / 24 / 3600);
           return { value, scale: `day${value > 1 ? 's' : ''}` };
-        } else if (time > 3600) {
+        } if (time > 3600) {
           const value = Math.floor(time / 3600);
           return { value, scale: `hour${value > 1 ? 's' : ''}` };
-        } else if (time > 60) {
+        } if (time > 60) {
           const value = Math.floor(time / 60);
           return { value, scale: `minute${value > 1 ? 's' : ''}` };
-        } else {
-          const value = Math.floor(time);
-          return { value, scale: `second${value > 1 ? 's' : ''}` };
         }
+        const value = Math.floor(time);
+        return { value, scale: `second${value > 1 ? 's' : ''}` };
       };
-    }
+    },
   },
   apollo: {
     $loadingKey: 'loading',

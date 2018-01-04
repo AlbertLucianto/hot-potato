@@ -134,7 +134,6 @@ export default {
         },
       }).then((resDeploy) => {
         this.loading -= 1;
-        console.log(resDeploy);
         const potatoId = resDeploy.data.deployPotato.id;
         this.showPotato = false;
         this.$apollo.mutate({
@@ -147,7 +146,7 @@ export default {
             potatoId,
             receiverId: this.selectedUser.id,
           },
-        }).then((resPass) => {
+        }).then(() => {
           this.showPotato = true;
           this.notification = `New potato successfully sent to ${this.selectedUser.name}`;
           setTimeout(() => {
@@ -155,7 +154,6 @@ export default {
           }, NOTIFICATION_DURATION);
           this.selectedUser = undefined;
           this.search = '';
-          console.log(resPass);
         }).catch((passErr) => {
           console.log(passErr); // eslint-disable-line no-console
           const messageAr = passErr.message.split('error: ');
