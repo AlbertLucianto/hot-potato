@@ -1,5 +1,7 @@
-<p align="center" style="padding-right: 20px"><img width="400" src="/client/static/hot_potato_logo.png" alt="Hot Potato Game logo"></p>
+<p align="center"><img width="600" src="/client/static/hot_potato_logo.png" alt="Hot Potato Game logo"></p>
 
+
+------------------------
 ## Overview
 
 > Hot potato is a simple game inpsired (or cloned to be exact) by Google internal tool. Players simply can create and pass potato to anyone for a limited time, otherwise they will drop it.
@@ -8,21 +10,75 @@
 
 ### Server
 
-* GraphQL
-* Graphcool
-* Docker
-* TypeScript
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://github.com/graphql/graphql-js">
+          <img width="180" src="https://marmelab.com/images/blog/graphql/logo.png" alt="GraphQL">
+        </a>
+      </td>
+      <td align="center" valign="middle">
+        <a href="https://github.com/graphcool/graphcool">
+          <img width="220" src="http://mvp-space.com/img/partners/graphcool.svg" alt="Graphcool">
+        </a>
+      </td>
+      <td align="center" valign="middle">
+        <a href="https://www.docker.com/">
+          <img width="180" src="https://www.fullstackpython.com/img/logos/docker-wide.png" alt="Docker">
+        </a>
+      </td>
+      <td align="center" valign="middle">
+        <a href="https://www.typescriptlang.org/">
+          <img width="120" src="https://d33wubrfki0l68.cloudfront.net/0579d394494deca6039254f27da3036f05a7ea05/8e284/images/typescript.png" alt="TypeScript">
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
 
 ### Client
 
-* VueJS
-* Vuex
-* Apollo Client
-* Vue Apollo
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://vuejs.org/">
+          <img width="250" src="https://user-images.githubusercontent.com/7110136/29002856-9a237b36-7ab4-11e7-9f51-a0521d5c7a9b.png" alt="VueJS">
+        </a>
+      </td>
+      <td align="center" valign="middle" width="250">
+        <a href="https://www.apollographql.com">
+          <img width="200" src="http://optics-docs.apollodata.com/images/logo-apollo-space-left.svg" alt="Apollo Client">
+        </a>
+      </td>
+      <td align="center" valign="middle" width="200">
+        <a href="https://github.com/Akryum/vue-apollo">
+          <h2>Vue Apollo</h2>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 ### Database (handled by Graphcool)
 
-* MySQL
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="middle">
+        <a href="https://www.mysql.com/">
+          <img width="150" src="https://upload.wikimedia.org/wikipedia/en/thumb/6/62/MySQL.svg/1200px-MySQL.svg.png">
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## Local Deployment
 
