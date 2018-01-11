@@ -1,66 +1,25 @@
 <template>
-<div class="receivedList__container">
-  <div v-for="(potato, idx) in allHolders" :key="potato.id" class="received__item">
-    <div class="received__content">
-      <img class="potatoIcon" src="../../assets/SVG/list_dropped.svg" v-if="categoryByDate(potato.potato) === category.dropped.name"/>
-      <img class="potatoIcon" src="../../assets/SVG/list_relax.svg" v-else-if="categoryByDate(potato.potato) === category.relax.name"/>
-      <img class="potatoIcon" src="../../assets/SVG/list_medium.svg" v-else-if="categoryByDate(potato.potato) === category.medium.name"/>
-      <img class="potatoIcon" src="../../assets/SVG/list_urgent.svg" v-else-if="categoryByDate(potato.potato) === category.urgent.name"/>
-      <div class="content__text">{{ displayText(potato.potato).value }}</div>
-      <div class="content__text">{{ displayText(potato.potato).scale }}</div>
-    </div>
-  </div>
+<div class="sentList__container">
+  <detail-potato v-for="potato in allHolders" :key="potato.id"
+    :potato="potato.potato" :from="potato.passedFrom" />
 </div>
 </template>
 
 <script>
 import gql from 'graphql-tag';
-
-const calcDiffTime = ISODate => (new Date(ISODate).getTime() - new Date().getTime()) / 1000;
+import DetailPotato from '../DetailPotato';
 
 export default {
+  components: {
+    DetailPotato,
+  },
   props: {
     userId: String,
   },
   data() {
     return {
       loading: 0,
-      category: {
-        dropped: { name: 'DROPPED', limit: 0 },
-        relax: { name: 'RELAX', limit: 7 * 24 * 3600 },
-        medium: { name: 'MEDIUM', limit: 24 * 3600 },
-        urgent: { name: 'URGENT', limit: 2 * 3600 },
-      },
     };
-  },
-  computed: {
-    categoryByDate() {
-      return (potato) => {
-        const time = calcDiffTime(potato.droppedDate);
-        if (time < 0) return this.category.dropped.name;
-        if (time > this.category.relax.limit) return this.category.relax.name;
-        if (time > this.category.medium.limit) return this.category.medium.name;
-        return this.category.urgent.name;
-      };
-    },
-    displayText() {
-      return (potato) => {
-        const time = calcDiffTime(potato.droppedDate);
-        if (time < 0) return { value: `Dropped at ${new Date(potato.droppedDate).toDateString()}` };
-        if (time > 24 * 3600) {
-          const value = Math.floor(time / 24 / 3600);
-          return { value, scale: `day${value > 1 ? 's' : ''}` };
-        } if (time > 3600) {
-          const value = Math.floor(time / 3600);
-          return { value, scale: `hour${value > 1 ? 's' : ''}` };
-        } if (time > 60) {
-          const value = Math.floor(time / 60);
-          return { value, scale: `minute${value > 1 ? 's' : ''}` };
-        }
-        const value = Math.floor(time);
-        return { value, scale: `second${value > 1 ? 's' : ''}` };
-      };
-    },
   },
   apollo: {
     $loadingKey: 'loading',
@@ -97,18 +56,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.receivedList__container {
+.sentList__container {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  .received__item {
-    width: 120px;
-    height: 120px;
-    margin: 30px;
-    .potatoIcon {
-      max-height: 100px;
-      max-width: 100px;
-    }
-  }
 }
 </style>
