@@ -1,4 +1,4 @@
-<p align="center"><img width="400" src="/client/static/hot_potato_logo.png" alt="Hot Potato Game logo"></p>
+<p align="center" style="padding-right: 20px"><img width="400" src="/client/static/hot_potato_logo.png" alt="Hot Potato Game logo"></p>
 
 ## Overview
 
