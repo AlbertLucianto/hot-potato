@@ -1,12 +1,12 @@
 <p align="center"><img width="600" src="/client/static/hot_potato_logo.png" alt="Hot Potato Game logo"></p>
 
 
-------------------------
+
 ## Overview
 
 > Hot potato is a simple game inpsired (or cloned to be exact) by Google internal tool. Players simply can create and pass potato to anyone for a limited time, otherwise they will drop it.
 
-------------------------
+
 ## Dependencies
 
 ### Server
@@ -80,7 +80,7 @@
   </tbody>
 </table>
 
-------------------------
+
 ## Local Deployment
 
 ### Server
@@ -124,7 +124,7 @@ Thus, to clear them, lastly run: **warning: it will also clear other docker cont
 # remove all dangling volumes
 docker volume rm `docker volume ls -q -f dangling=true`
 ```
-------------------------
+
 ## Access MySQL in local deployment
 
 It is not recommended since graphcool uses its own hashing for its database implementation, thus it's not readable.
