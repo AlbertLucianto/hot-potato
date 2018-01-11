@@ -19,6 +19,7 @@ export default {
       required: true,
     },
     from: Object,
+    selected: Boolean,
   },
   data() {
     return {
@@ -65,11 +66,27 @@ export default {
 <style lang="scss" scoped>
 .potatoDetail__container {
   width: 120px;
-  height: 120px;
-  margin: 30px;
+  height: 180px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px -5px rgba(0,0,0,.2);
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #EDEDEF;
   .potatoIcon {
     max-height: 100px;
     max-width: 100px;
+    margin: 10px;
+  }
+  .content__text {
+    font-size: 12px;
+  }
+  &:hover {
+    cursor: pointer;
   }
 }
 </style>

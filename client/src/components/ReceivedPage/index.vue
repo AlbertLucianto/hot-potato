@@ -2,6 +2,7 @@
 <div class="receivedList__container">
   <detail-potato v-for="potato in receivedPotato" :key="potato.id"
     :potato="potato.potato" :from="potato.passedFrom" />
+  <div class="gradient--botom" />
 </div>
 </template>
 
@@ -55,8 +56,21 @@ export default {
 
 <style lang="scss" scoped>
 .receivedList__container {
+  box-sizing: border-box;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   flex-wrap: wrap;
+  padding: 50px 0 120px 0;
+  height: 100%;
+  overflow: scroll;
+  background: #F8F8FE;
+  .gradient--botom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(to top, #F8F8FE, #F5F5FD00)
+  }
 }
 </style>

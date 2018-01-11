@@ -2,6 +2,7 @@
 <div class="sentList__container">
   <detail-potato v-for="potato in allHolders" :key="potato.id"
     :potato="potato.potato" :from="potato.passedFrom" />
+  <div class="gradient--botom" />
 </div>
 </template>
 
@@ -57,8 +58,21 @@ export default {
 
 <style lang="scss" scoped>
 .sentList__container {
+  box-sizing: border-box;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   flex-wrap: wrap;
+  padding: 50px 0 120px 0;
+  height: 100%;
+  overflow: scroll;
+  background: #333;
+  .gradient--botom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(to top, #333, #A0333300)
+  }
 }
 </style>
