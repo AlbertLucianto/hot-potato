@@ -1,7 +1,8 @@
 <template>
 <div class="receivedList__container">
-  <detail-potato v-for="potato in receivedPotato" :key="potato.id"
-    :potato="potato.potato" :from="potato.passedFrom" />
+  <detail-potato v-for="potato in receivedPotato" v-if="!selected || selected === potato.potato.id"
+    :key="potato.id" :potato="potato.potato" :from="potato.passedFrom"
+    :selected="selected === potato.potato.id" :clickTrigger="select"/>
   <div class="gradient--botom" />
 </div>
 </template>
@@ -20,6 +21,7 @@ export default {
   data() {
     return {
       loading: 0,
+      selected: '',
     };
   },
   apollo: {
@@ -49,6 +51,12 @@ export default {
           console.log(data); // eslint-disable-line no-console
         },
       };
+    },
+  },
+  methods: {
+    select(potatoId) {
+      console.log(potatoId);
+      this.selected = potatoId;
     },
   },
 };

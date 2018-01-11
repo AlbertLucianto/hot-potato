@@ -1,5 +1,5 @@
 <template>
-  <div class="potatoDetail__container">
+  <div class="potatoDetail__container" :class="{ selected, hidden }" @mousedown="clickTrigger(potato.id)">
     <img class="potatoIcon" src="../../assets/SVG/list_dropped.svg" v-if="categoryByDate(potato) === category.dropped.name"/>
     <img class="potatoIcon" src="../../assets/SVG/list_relax.svg" v-else-if="categoryByDate(potato) === category.relax.name"/>
     <img class="potatoIcon" src="../../assets/SVG/list_medium.svg" v-else-if="categoryByDate(potato) === category.medium.name"/>
@@ -19,7 +19,9 @@ export default {
       required: true,
     },
     from: Object,
+    hidden: Boolean,
     selected: Boolean,
+    clickTrigger: Function,
   },
   data() {
     return {
@@ -77,6 +79,12 @@ export default {
   flex-direction: column;
   background: white;
   border: 1px solid #EDEDEF;
+  &.selected {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+  }
   .potatoIcon {
     max-height: 100px;
     max-width: 100px;
