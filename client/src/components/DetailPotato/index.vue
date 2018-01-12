@@ -1,5 +1,5 @@
 <template>
-  <div class="potatoDetail__container" :class="{ selected, hidden }" @mousedown="clickTrigger(potato.id)">
+  <div class="potatoDetail__container" :class="{ selected, hidden }" @mousedown="handleClick(potato.id)">
     <img class="potatoIcon" src="../../assets/SVG/list_dropped.svg" v-if="categoryByDate(potato) === category.dropped.name"/>
     <img class="potatoIcon" src="../../assets/SVG/list_relax.svg" v-else-if="categoryByDate(potato) === category.relax.name"/>
     <img class="potatoIcon" src="../../assets/SVG/list_medium.svg" v-else-if="categoryByDate(potato) === category.medium.name"/>
@@ -21,7 +21,8 @@ export default {
     from: Object,
     hidden: Boolean,
     selected: Boolean,
-    clickTrigger: Function,
+    select: Function,
+    deselect: Function,
   },
   data() {
     return {
@@ -62,16 +63,26 @@ export default {
       };
     },
   },
+  methods: {
+    handleClick(potatoId) {
+      if (this.selected) {
+        this.deselect();
+      } else {
+        this.select(potatoId);
+      }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .potatoDetail__container {
-  width: 120px;
-  height: 180px;
+  box-sizing: border-box;
+  width: 150px;
+  height: 200px;
   margin: 10px;
   border-radius: 10px;
-  box-shadow: 0 10px 30px -5px rgba(0,0,0,.2);
+  box-shadow: 0 10px 15px -5px rgba(0,0,0,.2);
   padding: 10px;
   display: flex;
   justify-content: center;
@@ -79,11 +90,19 @@ export default {
   flex-direction: column;
   background: white;
   border: 1px solid #EDEDEF;
+  transition: all .2s ease;
+  &:hover:not(.selected) {
+    transform: scale(1.02) translateY(-5px);
+    box-shadow: 0 15px 30px -5px rgba(0,0,0,.2);
+  }
   &.selected {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
+    left: 0;
+    margin: 0;
+    transition: all .2s ease;
   }
   .potatoIcon {
     max-height: 100px;

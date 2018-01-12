@@ -1,8 +1,9 @@
 <template>
 <div class="sentList__container">
-  <detail-potato v-for="potato in allHolders" :key="potato.id"
-    :potato="potato.potato" :from="potato.passedFrom" />
-  <div class="gradient--botom" />
+  <detail-potato v-for="potato in allHolders"  v-if="!selected || selected === potato.potato.id"
+    :key="potato.id" :potato="potato.potato" :from="potato.passedFrom"
+    :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
+  <div class="gradient--botom" :class="{ hidden: selected }"/>
 </div>
 </template>
 
@@ -20,6 +21,7 @@ export default {
   data() {
     return {
       loading: 0,
+      selected: '',
     };
   },
   apollo: {
@@ -53,6 +55,10 @@ export default {
       };
     },
   },
+  methods: {
+    select(potatoId) { this.selected = potatoId; },
+    deselect() { this.selected = ''; },
+  },
 };
 </script>
 
@@ -68,11 +74,15 @@ export default {
   background: #333;
   .gradient--botom {
     position: absolute;
-    bottom: 0;
+    bottom: -10px;
     left: 0;
     width: 100%;
     height: 120px;
-    background: linear-gradient(to top, #333, #A0333300)
+    background: #333;
+    box-shadow: 0 0 50px -5px rgba(0,0,0,.5);
+    &.hidden {
+      background: unset;
+    }
   }
 }
 </style>

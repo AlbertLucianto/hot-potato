@@ -1,8 +1,8 @@
 <template>
 <div class="receivedList__container">
   <detail-potato v-for="potato in receivedPotato" v-if="!selected || selected === potato.potato.id"
-    :key="potato.id" :potato="potato.potato" :from="potato.passedFrom"
-    :selected="selected === potato.potato.id" :clickTrigger="select"/>
+    :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom"
+    :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
   <div class="gradient--botom" />
 </div>
 </template>
@@ -54,10 +54,8 @@ export default {
     },
   },
   methods: {
-    select(potatoId) {
-      console.log(potatoId);
-      this.selected = potatoId;
-    },
+    select(potatoId) { this.selected = potatoId; },
+    deselect() { this.selected = ''; },
   },
 };
 </script>
@@ -74,11 +72,12 @@ export default {
   background: #F8F8FE;
   .gradient--botom {
     position: absolute;
-    bottom: 0;
+    bottom: -10px;
     left: 0;
     width: 100%;
     height: 120px;
-    background: linear-gradient(to top, #F8F8FE, #F5F5FD00)
+    background: #F8F8FE;
+    box-shadow: 0 0 30px -5px rgba(224,78,78,.3);
   }
 }
 </style>
