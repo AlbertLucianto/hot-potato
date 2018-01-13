@@ -77,7 +77,7 @@ export default {
     width: 100%;
     height: 120px;
     background: #F8F8FE;
-    box-shadow: 0 0 30px -5px rgba(224,78,78,.3);
+    box-shadow: 0 0 35px -5px rgba(150,78,78,.2);
   }
 }
 </style>

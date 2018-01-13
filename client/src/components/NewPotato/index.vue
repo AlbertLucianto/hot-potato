@@ -20,11 +20,8 @@
       <img class="loadingIcon" src="../../assets/SVG/loading-cylon.svg" v-if="loading"/>
     </div>
   </div>
-  <div class="input__wrapper" :class="{ searching, selected: !!selectedUser, emphasized, jerked: !!notification }">
-    <img class="cancel__button" src="../../assets/SVG/cross_dark.svg" v-if="searching" @click="cancelSearch"/>
-    <input v-model="search" placeholder="Whom to pass?" :class="{ searching }" @focus="setSearching"/>
-    <div class="selectedUser__email" v-if="selectedUser && !searching">{{ selectedUser.email }}</div>
-  </div>
+  <search-bar :setSearch="setSearch" :emphasized="emphasized" :selectedUser="selectedUser"
+    :jerked="!!notification" :cancel="cancelSearch" :setSearching="setSearching"/>
 </div>
 </template>
 
@@ -33,9 +30,9 @@ import gql from 'graphql-tag';
 
 import PotatoAnimate from './PotatoAnimate';
 import TemperatureSetting from './TemperatureSetting';
+import SearchBar from '../SearchBar';
 
 const SEARCH_PAGE_SIZE = 5;
-const TYPING_TIMEOUT_TIME = 300;
 const PASS_TRESHOLD = 100;
 const NOTIFICATION_DURATION = 3000;
 
@@ -45,6 +42,7 @@ export default {
   components: {
     PotatoAnimate,
     TemperatureSetting,
+    SearchBar,
   },
   data() {
     return {
@@ -53,8 +51,6 @@ export default {
       searching: false,
       search: '',
       loading: 0,
-      typing: false,
-      typingTimeout: undefined,
       selectedUser: undefined,
       passPosition: 0,
       emphasized: false,
@@ -66,15 +62,6 @@ export default {
       return {
         opacity: this.temperature / 200,
       };
-    },
-  },
-  watch: {
-    search() {
-      clearTimeout(this.typingTimeout);
-      this.typing = true;
-      this.typingTimeout = setTimeout(() => {
-        this.typing = false;
-      }, TYPING_TIMEOUT_TIME);
     },
   },
   apollo: {
@@ -109,17 +96,10 @@ export default {
   },
   methods: {
     setTemperature(val) { this.temperature = val; },
-    setSearching() { this.searching = true; },
-    cancelSearch() {
-      this.searching = false;
-      this.search = '';
-      this.selectedUser = undefined;
-    },
-    selectUser(user) {
-      this.selectedUser = user;
-      this.search = user.name;
-      this.searching = false;
-    },
+    setSearch(word) { this.search = word; },
+    setSearching(val) { this.searching = val; },
+    cancelSearch() { this.selectedUser = undefined; },
+    selectUser(user) { this.selectedUser = user; },
     deployAndPassPotato() {
       if (this.loading) return;
       this.loading += 1;
@@ -240,82 +220,6 @@ div {
   }
   .potatoAnimate {
     animation-duration: .6s;
-  }
-  .input__wrapper {
-    position: absolute;
-    width: 60%;
-    height: 50px;
-    top: 60px;
-    left: 20%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: white;
-    border-radius: 5px;
-    transition: all .1s ease;
-    user-select: none;
-    &.searching {
-      top: 0;
-      height: 75px;
-      width: 100%;
-      left: 0;
-      border-top-left-radius: 15px;
-      border-top-right-radius: 15px;
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-      user-select: unset;
-    }
-    &.selected {
-      box-shadow: 0 0 20px -5px $orange;
-      input {
-        color: $darkOrange;
-      }
-    }
-    &.emphasized {
-      transition: transform .2s ease;
-      box-shadow: 0 0 30px -5px $red;
-      transform: scale(1.3) rotate(-2deg);
-      input::placeholder {
-        font-size: 1.2rem;
-      }
-    }
-    &.jerked {
-      margin-top: 50px;
-    }
-    input {
-      text-align: center;
-      width: 60%;
-      flex-grow: 1;
-      margin-top: -2.5px;
-      height: 30px;
-      font-size: 1.5rem;
-      font-weight: 300;
-      &.searching {
-        margin-right: 60px;
-        margin-top: 0;
-      }
-      &::placeholder {
-        font-size: 1rem;
-        user-select: none;
-      }
-    }
-    .cancel__button {
-      width: 17.5px;
-      margin: 0 20px;
-      opacity: .8;
-      transition: opacity .2s ease;
-      &:hover {
-        opacity: .9;
-        cursor: pointer;
-      }
-    }
-    .selectedUser__email {
-      position: absolute;
-      bottom: -30px;
-      font-size: .9rem;
-      font-weight: 300;
-      color: white;
-    }
   }
   .overlaySearching {
     position: absolute;
