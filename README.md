@@ -123,6 +123,9 @@ Thus, to clear them, lastly run: **warning: it will also clear other docker cont
 ```shell
 # remove all dangling volumes
 docker volume rm `docker volume ls -q -f dangling=true`
+
+# or for Graphcool 1.0
+gc local nuke
 ```
 
 ## Access MySQL in local deployment
