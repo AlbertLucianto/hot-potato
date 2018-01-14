@@ -81,7 +81,7 @@ export default {
     background: #333;
     box-shadow: 0 0 50px -5px rgba(0,0,0,.5);
     &.hidden {
-      background: unset;
+      // background: unset;
     }
   }
 }

@@ -11,17 +11,8 @@
       :send="deployAndPassPotato" :canSend="!!selectedUser" :remindInput="emphasizeSearchInput"/>
   </transition>
   <temperature-setting :setTemperature="setTemperature" :class="{ blur: searching }"/>
-  <div class="overlaySearching" v-if="searching">
-    <div class="searchResults" v-if="search">
-      <div class="result__item" v-for="resultItem in allUsers" :key="resultItem.id" @click="selectUser(resultItem)">
-        <div class="resultItem resultItem__name">{{ resultItem.name }}</div>
-        <div class="resultItem resultItem__email">{{ resultItem.email }}</div>
-      </div>
-      <img class="loadingIcon" src="../../assets/SVG/loading-cylon.svg" v-if="loading"/>
-    </div>
-  </div>
-  <search-bar :setSearch="setSearch" :emphasized="emphasized" :selectedUser="selectedUser"
-    :jerked="!!notification" :cancel="cancelSearch" :setSearching="setSearching"/>
+  <search-bar :setSearch="setSearch" :emphasized="emphasized" :selectedUser="selectedUser" :selectUser="selectUser"
+    :jerked="!!notification" :cancel="cancelSearch" :setSearching="setSearching" :results="allUsers"/>
 </div>
 </template>
 
@@ -221,51 +212,8 @@ div {
   .potatoAnimate {
     animation-duration: .6s;
   }
-  .overlaySearching {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    border-radius: 15px;
-    background-color: rgba(255,255,255,.8);
-  }
   .blur {
     filter: blur(20px);
-  }
-  .searchResults {
-    margin-top: 100px;
-    .result__item {
-      margin: 0 10px;
-      padding: 10px;
-      text-align: left;
-      border: 1px solid rgba(0,0,0,0);
-      border-bottom: 1px solid rgba(0,0,0,.1);
-      transition: border .2s ease;
-      .resultItem {
-        margin: 5px;
-        &__name {
-          font-weight: 600;
-        }
-        &__email {
-          color: $darkOrange;
-        }
-      }
-      &:hover {
-        border: 1px solid $orange;
-        border-radius: 5px;
-        box-shadow: 0 5px 20px -5px rgba(0,0,0,.1);
-        background-color: rgba(255,255,255,.8);
-        cursor: pointer;
-        &:active {
-          background: white;
-        }
-      }
-    }
-    .loadingIcon {
-      margin-top: 30px;
-      width: 100px;
-    }
   }
 }
 

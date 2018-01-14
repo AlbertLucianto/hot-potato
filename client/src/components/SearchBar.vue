@@ -1,10 +1,21 @@
 <template>
+<div>
+  <div class="overlaySearching" v-if="searching">
+    <div class="searchResults" v-if="search">
+      <div class="result__item" v-for="resultItem in results" :key="resultItem.id" @click="handleSelectUser(resultItem)">
+        <div class="resultItem resultItem__name">{{ resultItem.name }}</div>
+        <div class="resultItem resultItem__email">{{ resultItem.email }}</div>
+      </div>
+      <img class="loadingIcon" src="../assets/SVG/loading-cylon.svg" v-if="loading"/>
+    </div>
+  </div>
   <div class="input__wrapper" :class="{ searching, selected: !!selectedUser, emphasized, jerked }">
     <img class="cancel__button" src="../assets/SVG/cross_dark.svg" v-if="searching" @click="cancelSearch"/>
     <input v-model="search" placeholder="Whom to pass?" :class="{ searching, selected: selectedUser }" @focus="searchFocus"/>
     <img class="tick__button" src="../assets/SVG/tick_dark.svg" v-if="searching && selectedUser" @click="closeSearch"/>
     <div class="selectedUser__email" v-if="selectedUser && !searching">{{ selectedUser.email }}</div>
   </div>
+</div>
 </template>
 
 <script>
@@ -15,9 +26,11 @@ export default {
     setSearch: Function,
     emphasized: Boolean,
     selectedUser: Object,
+    selectUser: Function,
     jerked: Boolean,
     cancel: Function,
     setSearching: Function,
+    results: Array,
   },
   data() {
     return {
@@ -28,10 +41,6 @@ export default {
     };
   },
   watch: {
-    selectedUser(user) {
-      this.searching = false;
-      this.search = user ? user.name : '';
-    },
     search(word) {
       clearTimeout(this.typingTimeout);
       this.typing = true;
@@ -58,8 +67,16 @@ export default {
     },
     closeSearch() {
       this.searching = false;
+      this.search = this.selectedUser.name;
     },
     searchFocus() { this.searching = true; },
+    handleSelectUser(user) {
+      this.searching = false;
+      this.search = user.name;
+      if (typeof this.selectUser === 'function') {
+        this.selectUser(user);
+      }
+    },
   },
 };
 </script>
@@ -160,4 +177,47 @@ $darkOrange: rgb(245,140,0);
     color: white;
   }
 }
+.overlaySearching {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    border-radius: 15px;
+    background-color: rgba(255,255,255,.8);
+    .searchResults {
+      margin-top: 100px;
+      .result__item {
+        margin: 0 10px;
+        padding: 10px;
+        text-align: left;
+        border: 1px solid rgba(0,0,0,0);
+        border-bottom: 1px solid rgba(0,0,0,.1);
+        transition: border .2s ease;
+        .resultItem {
+          margin: 5px;
+          &__name {
+            font-weight: 600;
+          }
+          &__email {
+            color: $darkOrange;
+          }
+        }
+        &:hover {
+          border: 1px solid $orange;
+          border-radius: 5px;
+          box-shadow: 0 5px 20px -5px rgba(0,0,0,.1);
+          background-color: rgba(255,255,255,.8);
+          cursor: pointer;
+          &:active {
+            background: white;
+          }
+        }
+      }
+      .loadingIcon {
+        margin-top: 30px;
+        width: 100px;
+      }
+    }
+  }
 </style>
