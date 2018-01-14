@@ -90,10 +90,10 @@ $darkOrange: rgb(245,140,0);
 
 .input__wrapper {
   position: absolute;
-  width: 60%;
+  width: 80%;
   height: 50px;
-  top: 60px;
-  left: 20%;
+  top: 30px;
+  left: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,6 +101,7 @@ $darkOrange: rgb(245,140,0);
   border-radius: 5px;
   transition: all .1s ease;
   user-select: none;
+  box-shadow: 0 5px 30px -10px $purple;
   &.searching {
     top: 0;
     height: 75px;

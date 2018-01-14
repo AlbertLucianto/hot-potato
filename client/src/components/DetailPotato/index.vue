@@ -76,24 +76,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$pink: rgb(255,45,85);
+$red: rgb(255,59,48);
+$purple: rgb(88,86,214);
+$orange: rgb(255,149,0);
+$darkOrange: rgb(245,140,0);
+
 .potatoDetail__container {
   box-sizing: border-box;
   width: 150px;
   height: 200px;
   margin: 10px;
   border-radius: 10px;
-  box-shadow: 0 10px 15px -5px rgba(0,0,0,.2);
+  box-shadow: 0 5px 15px -5px rgba(0,0,0,.2);
   padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   background: white;
-  border: 1px solid #EDEDEF;
+  border: 1px solid #EBEBED;
   transition: all .2s ease;
   &:hover:not(.selected) {
     transform: scale(1.02) translateY(-5px);
-    box-shadow: 0 15px 30px -5px rgba(0,0,0,.2);
+    box-shadow: 0 10px 25px -10px $orange;
   }
   &.selected {
     position: absolute;

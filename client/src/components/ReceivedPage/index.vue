@@ -4,16 +4,22 @@
     :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
   <div class="gradient--botom" />
+  <search-bar :setSearch="setSearch" :selectedUser="selectedUser" :selectUser="selectUser" v-if="selected"
+    :jerked="!!notification" :cancel="cancelSearch" :setSearching="setSearching" :results="allUsers"/>
 </div>
 </template>
 
 <script>
 import gql from 'graphql-tag';
 import DetailPotato from '../DetailPotato';
+import SearchBar from '../SearchBar';
+
+const SEARCH_PAGE_SIZE = 5;
 
 export default {
   components: {
     DetailPotato,
+    SearchBar,
   },
   props: {
     userId: String,
@@ -22,6 +28,10 @@ export default {
     return {
       loading: 0,
       selected: '',
+      searching: false,
+      search: '',
+      selectedUser: undefined,
+      notification: '',
     };
   },
   apollo: {
@@ -52,10 +62,41 @@ export default {
         },
       };
     },
+    allUsers() {
+      return {
+        query: gql`query getUser($contain: String!, $pageSize: Int!) {
+          allUsers(
+            filter: { name_contains: $contain },
+            first: $pageSize
+          ) {
+            id
+            name
+            email
+          }
+        }`,
+        variables() { // Using function for reactive search attribute
+          return {
+            contain: this.search,
+            pageSize: SEARCH_PAGE_SIZE,
+          };
+        },
+        skip() {
+          return !this.search || this.typing;
+        },
+        fetchPolicy: 'cache-first', // Because user results is unlikely to change
+        result(data) {
+          console.log(data); // eslint-disable-line no-console
+        },
+      };
+    },
   },
   methods: {
     select(potatoId) { this.selected = potatoId; },
     deselect() { this.selected = ''; },
+    setSearch(word) { this.search = word; },
+    setSearching(val) { this.searching = val; },
+    cancelSearch() { this.selectedUser = undefined; },
+    selectUser(user) { this.selectedUser = user; },
   },
 };
 </script>
