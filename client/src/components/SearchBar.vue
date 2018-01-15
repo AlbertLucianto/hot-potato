@@ -31,6 +31,7 @@ export default {
     cancel: Function,
     setSearching: Function,
     results: Array,
+    loading: 0,
   },
   data() {
     return {

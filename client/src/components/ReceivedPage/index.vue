@@ -1,7 +1,7 @@
 <template>
 <div class="receivedList__container">
   <detail-potato v-for="potato in receivedPotato" v-if="!selected || selected === potato.potato.id"
-    :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom"
+    :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom" :userId="userId"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
   <div class="gradient--botom" />
   <search-bar :setSearch="setSearch" :selectedUser="selectedUser" :selectUser="selectUser" v-if="selected"
