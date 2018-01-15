@@ -39,6 +39,10 @@ export default {
               id
               droppedDate
             }
+            passedFrom {
+              id
+              name
+            }
           }
         }`,
         variables() {
@@ -58,7 +62,7 @@ export default {
   },
   computed: {
     isEmpty() {
-      const empty = this.allHolders ? !this.allHolders.length : true;
+      const empty = this.allHolders ? !this.allHolders.length : false;
       return empty && !this.loading;
     },
   },

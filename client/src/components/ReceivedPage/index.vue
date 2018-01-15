@@ -113,7 +113,7 @@ export default {
   },
   computed: {
     isEmpty() {
-      const empty = this.receivedPotato ? !this.receivedPotato.length : true;
+      const empty = this.receivedPotato ? !this.receivedPotato.length : false;
       return empty && !this.loading;
     },
   },
