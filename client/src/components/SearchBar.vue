@@ -102,7 +102,7 @@ $darkOrange: rgb(245,140,0);
   border-radius: 5px;
   transition: all .1s ease;
   user-select: none;
-  box-shadow: 0 5px 30px -10px $purple;
+  box-shadow: 0 10px 30px -10px $purple;
   &.searching {
     top: 0;
     height: 75px;
@@ -115,7 +115,7 @@ $darkOrange: rgb(245,140,0);
     user-select: unset;
   }
   &.selected {
-    box-shadow: 0 0 20px -5px $orange;
+    box-shadow: 0 5px 20px -5px $orange;
     input {
       color: $darkOrange;
     }

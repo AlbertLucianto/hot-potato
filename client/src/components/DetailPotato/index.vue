@@ -8,6 +8,7 @@
     <div class="potato__details">
       <div class="time__value">{{ displayText(potato).value }}</div>
       <div class="time__scale">{{ displayText(potato).scale }}</div>
+      <div class="time__info">{{ displayText(potato).info }}</div>
       <div v-if="selected" v-for="detail in details" :key="detail.label" class="potato__detail">
         <div class="detail__label">{{ detail.label }}</div>
         <div class="detail__value">{{ detail.value }}</div>
@@ -58,7 +59,7 @@ export default {
     displayText() {
       return (potato) => {
         const time = calcDiffTime(potato.droppedDate);
-        if (time < 0) return { value: `Dropped at ${new Date(potato.droppedDate).toDateString()}` };
+        if (time < 0) return { info: `Dropped at ${new Date(potato.droppedDate).toDateString()}` };
         if (time > 24 * 3600) {
           const value = Math.floor(time / 24 / 3600);
           return { value, scale: `day${value > 1 ? 's' : ''}` };
@@ -107,7 +108,7 @@ export default {
         skip() {
           return !this.selected;
         },
-        fetchPolicy: 'cache-first',
+        fetchPolicy: 'cache-and-network',
         result(data) {
           console.log(data); // eslint-disable-line no-console
         },
@@ -168,6 +169,10 @@ $darkOrange: rgb(245,140,0);
     .time__scale {
       font-size: 12px;
     }
+    .time__info {
+      font-size: 14px;
+      color: #666;
+    }
     .potato__detail {
       margin-bottom: 15px;
       .detail__label {
@@ -193,7 +198,7 @@ $darkOrange: rgb(245,140,0);
     flex-direction: row;
     .potatoIcon {
       max-height: 250px;
-      max-width: 250px;
+      max-width: 180px;
       flex-grow: 1;
       margin: 30px;
     }
@@ -208,6 +213,9 @@ $darkOrange: rgb(245,140,0);
         font-size: 20px;
         color: $red;
         margin-bottom: 30px;
+      }
+      .time__info {
+        margin-bottom: 20px;
       }
     }
   }

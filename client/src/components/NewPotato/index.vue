@@ -1,6 +1,6 @@
 <template>
 <div class="newPotatoPage__container" ref="container">
-  <div class="account__notification" :class="{ show: notification }">{{ notification }}</div>
+  <div class="new__notification" :class="{ show: notification }">{{ notification }}</div>
   <div class="heat__wrapper">
     <div class="heat__gradient" :style="gradientStyle"/>
   </div>
@@ -172,7 +172,7 @@ div {
   justify-content: center;
   align-items: flex-end;
   flex-direction: column;
-  .account__notification {
+  .new__notification {
     position: absolute;
     top: -50px;
     padding: 20px;

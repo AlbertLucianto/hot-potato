@@ -6,7 +6,8 @@
   <div class="gradient--botom" />
   <search-bar :setSearch="setSearch" :selectedUser="selectedUser" :selectUser="selectUser" v-if="selected"
     :jerked="!!notification" :cancel="cancelSearch" :setSearching="setSearching" :results="allUsers"/>
-  <div class="sendButton" v-if="selectedUser && selected">SEND</div>
+  <div class="sendButton" v-if="selectedUser && selected" @click="passPotato">SEND</div>
+  <div class="new__notification" :class="{ show: notification, error }">{{ notification }}</div>
 </div>
 </template>
 
@@ -16,6 +17,7 @@ import DetailPotato from '../DetailPotato';
 import SearchBar from '../SearchBar';
 
 const SEARCH_PAGE_SIZE = 5;
+const NOTIFICATION_DURATION = 3000;
 
 export default {
   components: {
@@ -33,6 +35,7 @@ export default {
       search: '',
       selectedUser: undefined,
       notification: '',
+      error: false,
     };
   },
   apollo: {
@@ -100,7 +103,31 @@ export default {
     selectUser(user) { this.selectedUser = user; },
     passPotato() {
       this.$apollo.mutate({
-        mutation: gql``,
+        mutation: gql`mutation pass($receiverId: ID!, $potatoId: ID!) {
+          passPotato(receiverId: $receiverId, potatoId: $potatoId) {
+            id
+            droppedDate
+            sequence
+          }
+        }`,
+        variables: {
+          receiverId: this.selectedUser.id,
+          potatoId: this.selected,
+        },
+      }).then(() => {
+        this.notification = `New potato successfully sent to ${this.selectedUser.name}`;
+        this.error = false;
+        setTimeout(() => {
+          this.notification = '';
+        }, NOTIFICATION_DURATION);
+      }).catch((passErr) => {
+        console.log(passErr); // eslint-disable-line no-console
+        const messageAr = passErr.message.split('error: ');
+        this.notification = messageAr[2];
+        this.error = true;
+        setTimeout(() => {
+          this.notification = '';
+        }, NOTIFICATION_DURATION);
       });
     },
   },
@@ -123,6 +150,27 @@ $darkOrange: rgb(245,140,0);
   height: 100%;
   overflow: scroll;
   background: #F8F8FE;
+  .new__notification {
+    position: absolute;
+    box-sizing: border-box;
+    top: -50px;
+    padding: 20px;
+    left: calc(50% - 150px);
+    width: 300px;
+    text-align: center;
+    transition: all .5s ease;
+    color: #333;
+    font-size: 1.1rem;
+    text-shadow: 0 -5px 25px rgba(255,255,255,.5);
+    font-weight: 600;
+    z-index: 2;
+    &.show {
+      top: -5px;
+    }
+    &.error {
+      color: $darkOrange;
+    }
+  }
   .gradient--botom {
     position: absolute;
     bottom: -10px;
@@ -134,12 +182,14 @@ $darkOrange: rgb(245,140,0);
   }
   .sendButton {
     position: absolute;
-    bottom: 200px;
+    bottom: 180px;
     padding: 10px 20px;
     border-radius: 10px;
     box-shadow: 0 5px 30px -5px rgba(0,0,0,.3);
     background: white;
     transition: all .1s ease;
+    font-weight: 600;
+    color: #333;
     &:hover {
       box-shadow: 0 2.5px 5px rgba(0,0,0,.3);
       cursor: pointer;
