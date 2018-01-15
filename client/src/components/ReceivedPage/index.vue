@@ -1,5 +1,19 @@
 <template>
 <div class="receivedList__container">
+  <div class="toggles__container">
+    <div class="toggle__wrapper" :class="{ active: holdingOnly }">
+      <div class="label">Holding Only</div>
+      <div class="toggle" @click="toggleHolding">
+        <div class="toggle__handle" />
+      </div>
+    </div>
+    <div class="toggle__wrapper" :class="{ active: activeOnly }">
+      <div class="label">Active Only</div>
+      <div class="toggle" @click="toggleActive">
+        <div class="toggle__handle" />
+      </div>
+    </div>
+  </div>
   <detail-potato v-for="potato in receivedPotato" v-if="!selected || selected === potato.potato.id"
     :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom" :userId="userId"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
@@ -36,6 +50,8 @@ export default {
       selectedUser: undefined,
       notification: '',
       error: false,
+      holdingOnly: false,
+      activeOnly: false,
     };
   },
   apollo: {
@@ -53,8 +69,8 @@ export default {
         }`,
         variables() {
           return {
-            currentlyHold: false,
-            filterDropped: false,
+            currentlyHold: this.holdingOnly,
+            filterDropped: this.activeOnly,
           };
         },
         skip() {
@@ -101,6 +117,8 @@ export default {
     setSearching(val) { this.searching = val; },
     cancelSearch() { this.selectedUser = undefined; },
     selectUser(user) { this.selectedUser = user; },
+    toggleHolding() { this.holdingOnly = !this.holdingOnly; },
+    toggleActive() { this.activeOnly = !this.activeOnly; },
     passPotato() {
       this.$apollo.mutate({
         mutation: gql`mutation pass($receiverId: ID!, $potatoId: ID!) {
@@ -146,10 +164,65 @@ $darkOrange: rgb(245,140,0);
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 50px 0 120px 0;
+  padding: 20px 0 120px 0;
   height: 100%;
   overflow: scroll;
   background: #F8F8FE;
+  .toggles__container {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 50px;
+    padding: 10px 50px 20px 50px;
+    margin: 10px 20px;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    .toggle__wrapper {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      .label {
+        font-size: 14px;
+        color: #777;
+        font-weight: 500;
+        transition: color .1s ease;
+      }
+      .toggle {
+        width: 60px;
+        height: 30px;
+        background: #DDD;
+        box-shadow: 0 2px 6px -1.5px rgba(0,0,0,.3) inset;
+        border-radius: 20px;
+        position: relative;
+        transition: background-color .2s ease;
+        cursor: pointer;
+        .toggle__handle {
+          position: absolute;
+          width: 25px;
+          height: 25px;
+          background: #F8F8F8;
+          border-radius: 50%;
+          left: 2.5px;
+          top: 1.5px;
+          box-shadow: 0 2px 10px rgba(0,0,0,.3);
+          transition: left .1s ease;
+        }
+      }
+      &.active {
+        .label {
+          color: $darkOrange;
+        }
+        .toggle {
+          background: $orange;
+          justify-content: flex-end;
+          .toggle__handle {
+            background: white;
+            left: calc(100% - 25px - 2.5px);
+          }
+        }
+      }
+    }
+  }
   .new__notification {
     position: absolute;
     box-sizing: border-box;
