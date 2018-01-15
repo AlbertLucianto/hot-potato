@@ -14,6 +14,7 @@
       </div>
     </div>
   </div>
+  <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
   <detail-potato v-for="potato in receivedPotato" v-if="!selected || selected === potato.potato.id"
     :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom" :userId="userId"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
@@ -50,8 +51,8 @@ export default {
       selectedUser: undefined,
       notification: '',
       error: false,
-      holdingOnly: false,
-      activeOnly: false,
+      holdingOnly: true,
+      activeOnly: true,
     };
   },
   apollo: {
@@ -110,6 +111,12 @@ export default {
       };
     },
   },
+  computed: {
+    isEmpty() {
+      const empty = this.receivedPotato ? !this.receivedPotato.length : true;
+      return empty && !this.loading;
+    },
+  },
   methods: {
     select(potatoId) { this.selected = potatoId; },
     deselect() { this.selected = ''; },
@@ -133,7 +140,7 @@ export default {
           potatoId: this.selected,
         },
       }).then(() => {
-        this.notification = `New potato successfully sent to ${this.selectedUser.name}`;
+        this.notification = `Successfully pass to ${this.selectedUser.name}`;
         this.error = false;
         setTimeout(() => {
           this.notification = '';
@@ -167,7 +174,7 @@ $darkOrange: rgb(245,140,0);
   padding: 20px 0 120px 0;
   height: 100%;
   overflow: scroll;
-  background: #F8F8FE;
+  background: #FAFAFE;
   .toggles__container {
     width: 100%;
     display: flex;
@@ -223,6 +230,10 @@ $darkOrange: rgb(245,140,0);
       }
     }
   }
+  .empty__info {
+    font-weight: 600;
+    color: #BBB;
+  }
   .new__notification {
     position: absolute;
     box-sizing: border-box;
@@ -250,8 +261,9 @@ $darkOrange: rgb(245,140,0);
     left: 0;
     width: 100%;
     height: 120px;
-    background: #F8F8FE;
+    background: #FCFCFE;
     box-shadow: 0 0 35px -5px rgba(150,78,78,.2);
+    border-top: 1px solid rgba(0,0,0,.1);
   }
   .sendButton {
     position: absolute;

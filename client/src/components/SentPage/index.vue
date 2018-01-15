@@ -1,5 +1,6 @@
 <template>
 <div class="sentList__container">
+  <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
   <detail-potato v-for="potato in allHolders"  v-if="!selected || selected === potato.potato.id"
     :key="potato.id" :potato="potato.potato" :from="potato.passedFrom"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
@@ -55,6 +56,12 @@ export default {
       };
     },
   },
+  computed: {
+    isEmpty() {
+      const empty = this.allHolders ? !this.allHolders.length : true;
+      return empty && !this.loading;
+    },
+  },
   methods: {
     select(potatoId) { this.selected = potatoId; },
     deselect() { this.selected = ''; },
@@ -72,6 +79,10 @@ export default {
   height: 100%;
   overflow: scroll;
   background: #333;
+  .empty__info {
+    font-weight: 600;
+    color: #BBB;
+  }
   .gradient--botom {
     position: absolute;
     bottom: -10px;

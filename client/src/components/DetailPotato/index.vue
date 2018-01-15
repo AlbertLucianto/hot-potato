@@ -76,9 +76,12 @@ export default {
     },
     details() {
       const { duration, createdBy, lastHeldBy } = this.Potato ? this.Potato : {};
+      const { from } = this;
+
       return this.Potato ? [
         { label: 'Duration', value: `${duration} hour${duration <= 1 ? '' : 's'}` },
         { label: 'Created By', value: createdBy.id === this.userId ? 'You' : createdBy.name },
+        { label: 'Passed From', value: from.id === this.userId ? 'You' : from.name },
         { label: 'Last Held By', value: lastHeldBy.id === this.userId ? 'You' : lastHeldBy.name },
       ] : [];
     },
@@ -135,6 +138,7 @@ $orange: rgb(255,149,0);
 $darkOrange: rgb(245,140,0);
 
 .potatoDetail__container {
+  user-select: none;
   box-sizing: border-box;
   width: 150px;
   height: 200px;
