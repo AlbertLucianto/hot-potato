@@ -28,7 +28,7 @@ export default async (event: FunctionEvent<IEventData>) => {
 
   try {
     if (!event.context.auth || !event.context.auth.nodeId || event.context.auth.typeName !== "User") {
-      return { error: "You haven't been logged in" };
+      return { error: "You are not logged in!" };
     }
 
     const graphcool = fromEvent(event);
