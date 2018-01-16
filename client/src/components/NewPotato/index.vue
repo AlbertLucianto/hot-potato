@@ -5,8 +5,7 @@
     <div class="heat__gradient" :style="gradientStyle"/>
   </div>
   <img class="drag__guide" v-if="!!selectedUser" src="../../assets/SVG/loading-bubbles.svg"/>
-  <transition
-    enter-active-class="animated bounceIn potatoAnimate">
+  <transition enter-active-class="animated bounceIn potatoAnimate">
     <potato-animate v-if="showPotato" :class="{ blur: searching }" :passPosition="passPosition"
       :send="deployAndPassPotato" :canSend="!!selectedUser" :remindInput="emphasizeSearchInput"/>
   </transition>
@@ -184,6 +183,7 @@ div {
     font-size: 1.1rem;
     text-shadow: 0 -5px 25px rgba(255,255,255,.5);
     font-weight: 600;
+    z-index: 5;
     &.show {
       top: 0;
     }

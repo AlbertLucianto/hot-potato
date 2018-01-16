@@ -1,7 +1,7 @@
 <template>
 <div class="sentList__container">
   <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
-  <detail-potato v-for="potato in allHolders"  v-if="!selected || selected === potato.potato.id"
+  <detail-potato v-for="potato in sortedPotato"  v-if="!selected || selected === potato.potato.id"
     :key="potato.id" :potato="potato.potato" :from="potato.passedFrom"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
   <div class="gradient--botom" :class="{ hidden: selected }"/>
@@ -10,7 +10,7 @@
 
 <script>
 import gql from 'graphql-tag';
-import DetailPotato from '../DetailPotato';
+import DetailPotato, { calcDiffTime } from '../DetailPotato';
 
 export default {
   components: {
@@ -23,6 +23,7 @@ export default {
     return {
       loading: 0,
       selected: '',
+      sortedPotato: [],
     };
   },
   apollo: {
@@ -56,6 +57,7 @@ export default {
         fetchPolicy: 'cache-and-network',
         result(data) {
           console.log(data); // eslint-disable-line no-console
+          this.sortPotato();
         },
       };
     },
@@ -69,6 +71,16 @@ export default {
   methods: {
     select(potatoId) { this.selected = potatoId; },
     deselect() { this.selected = ''; },
+    sortPotato() {
+      this.sortedPotato = this.allHolders ? [...this.allHolders] : [];
+
+      this.sortedPotato.sort((a, b) => {
+        const timeA = calcDiffTime(a.potato.droppedDate);
+        const timeB = calcDiffTime(b.potato.droppedDate);
+
+        return timeB - timeA;
+      });
+    },
   },
 };
 </script>

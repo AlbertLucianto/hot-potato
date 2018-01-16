@@ -20,7 +20,7 @@
 <script>
 import gql from 'graphql-tag';
 
-const calcDiffTime = ISODate => (new Date(ISODate).getTime() - new Date().getTime()) / 1000;
+export const calcDiffTime = ISODate => (new Date(ISODate).getTime() - new Date().getTime()) / 1000;
 
 export default {
   props: {
@@ -40,9 +40,9 @@ export default {
     return {
       category: {
         dropped: { name: 'DROPPED', limit: 0 },
-        relax: { name: 'RELAX', limit: 7 * 24 * 3600 },
-        medium: { name: 'MEDIUM', limit: 24 * 3600 },
-        urgent: { name: 'URGENT', limit: 2 * 3600 },
+        relax: { name: 'RELAX', limit: 12 * 3600 },
+        medium: { name: 'MEDIUM', limit: 6 * 3600 },
+        urgent: { name: 'URGENT' },
       },
     };
   },
@@ -197,9 +197,9 @@ $darkOrange: rgb(245,140,0);
     top: 0;
     left: 0;
     margin: 0;
-    padding: 20px;
-    padding-bottom: 80px;
+    padding: 40px 20px 80px 20px;
     flex-direction: row;
+    z-index: 1;
     .potatoIcon {
       max-height: 250px;
       max-width: 180px;

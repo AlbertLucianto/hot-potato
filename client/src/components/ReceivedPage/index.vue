@@ -15,9 +15,14 @@
     </div>
   </div>
   <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
-  <detail-potato v-for="potato in receivedPotato" v-if="!selected || selected === potato.potato.id"
+  <!-- <transition-group
+    name="custom-classes-transition"
+    enter-active-class="animated bounceIn"
+  > -->
+  <detail-potato v-for="potato in sortedPotato" v-if="!selected || selected === potato.potato.id"
     :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom" :userId="userId"
-    :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
+    :selected="selected === potato.potato.id" :select="select" :deselect="deselect" :class="{ blur: searching }"/>
+  <!-- </transition-group> -->
   <div class="gradient--botom" />
   <search-bar :setSearch="setSearch" :selectedUser="selectedUser" :selectUser="selectUser" v-if="selected"
     :jerked="!!notification" :cancel="cancelSearch" :setSearching="setSearching" :results="allUsers"/>
@@ -28,7 +33,7 @@
 
 <script>
 import gql from 'graphql-tag';
-import DetailPotato from '../DetailPotato';
+import DetailPotato, { calcDiffTime } from '../DetailPotato';
 import SearchBar from '../SearchBar';
 
 const SEARCH_PAGE_SIZE = 5;
@@ -53,6 +58,7 @@ export default {
       error: false,
       holdingOnly: true,
       activeOnly: true,
+      sortedPotato: [],
     };
   },
   apollo: {
@@ -80,6 +86,7 @@ export default {
         fetchPolicy: 'cache-and-network',
         result(data) {
           console.log(data); // eslint-disable-line no-console
+          this.sortPotato();
         },
       };
     },
@@ -126,6 +133,17 @@ export default {
     selectUser(user) { this.selectedUser = user; },
     toggleHolding() { this.holdingOnly = !this.holdingOnly; },
     toggleActive() { this.activeOnly = !this.activeOnly; },
+    sortPotato() {
+      this.sortedPotato = this.receivedPotato ? [...this.receivedPotato] : [];
+
+      this.sortedPotato.sort((a, b) => {
+        const timeA = calcDiffTime(a.potato.droppedDate);
+        const timeB = calcDiffTime(b.potato.droppedDate);
+
+        if (timeA < 0) return timeB < 0 ? timeA - timeB : 1;
+        return timeB < 0 ? -1 : timeA - timeB;
+      });
+    },
     passPotato() {
       this.$apollo.mutate({
         mutation: gql`mutation pass($receiverId: ID!, $potatoId: ID!) {
@@ -142,6 +160,8 @@ export default {
       }).then(() => {
         this.notification = `Successfully pass to ${this.selectedUser.name}`;
         this.error = false;
+        this.$apollo.queries.receivedPotato.refetch();
+        this.selected = '';
         setTimeout(() => {
           this.notification = '';
         }, NOTIFICATION_DURATION);
@@ -175,6 +195,9 @@ $darkOrange: rgb(245,140,0);
   height: 100%;
   overflow: scroll;
   background: #FAFAFE;
+  .blur {
+    filter: blur(20px);
+  }
   .toggles__container {
     width: 100%;
     display: flex;
@@ -247,7 +270,7 @@ $darkOrange: rgb(245,140,0);
     font-size: 1.1rem;
     text-shadow: 0 -5px 25px rgba(255,255,255,.5);
     font-weight: 600;
-    z-index: 2;
+    z-index: 5;
     &.show {
       top: -5px;
     }
@@ -267,16 +290,18 @@ $darkOrange: rgb(245,140,0);
   }
   .sendButton {
     position: absolute;
-    bottom: 180px;
+    bottom: 120px;
     padding: 10px 20px;
     border-radius: 10px;
-    box-shadow: 0 5px 30px -5px rgba(0,0,0,.3);
+    box-shadow: 0 2px 30px -5px $darkOrange;
+    border: 1px solid $orange;
     background: white;
     transition: all .1s ease;
     font-weight: 600;
     color: #333;
+    z-index: 30;
     &:hover {
-      box-shadow: 0 2.5px 5px rgba(0,0,0,.3);
+      box-shadow: 0 1px 5px $darkOrange;
       cursor: pointer;
     }
   }

@@ -82,6 +82,7 @@ export default {
   padding-top: 100px;
   bottom: 0;
   position: absolute;
+  z-index: 20;
   .revolver__inner {
     position: relative;
     width: 100%;
