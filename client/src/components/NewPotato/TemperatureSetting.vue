@@ -95,7 +95,7 @@ $darkOrange: rgb(245,140,0);
 .thermo__container {
   position: absolute;
   bottom: 35%;
-  left: calc(20px + 2.5vw);
+  left: calc(20px + 5%);
   height: 35%;
   width: 50px;
   cursor: -webkit-grab;

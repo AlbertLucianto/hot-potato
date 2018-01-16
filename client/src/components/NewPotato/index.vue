@@ -226,7 +226,7 @@ div {
   }
   .duration__container {
     color: white;
-    margin-top: 30px;
+    margin-top: 5%;
     user-select: none;
     z-index: 5;
     .description {
