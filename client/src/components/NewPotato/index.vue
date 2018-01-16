@@ -10,6 +10,11 @@
       :send="deployAndPassPotato" :canSend="!!selectedUser" :remindInput="emphasizeSearchInput"/>
   </transition>
   <temperature-setting :setTemperature="setTemperature" :class="{ blur: searching }"/>
+  <div class="duration__container">
+    <div class="description">This potato will be dropped in</div>
+    <div class="value">{{ duration }}</div>
+    <div class="scale">hours</div>
+  </div>
   <search-bar :setSearch="setSearch" :emphasized="emphasized" :selectedUser="selectedUser" :selectUser="selectUser"
     :jerked="!!notification" :cancel="cancelSearch" :setSearching="setSearching" :results="allUsers"/>
 </div>
@@ -23,7 +28,7 @@ import TemperatureSetting from './TemperatureSetting';
 import SearchBar from '../SearchBar';
 
 const SEARCH_PAGE_SIZE = 5;
-const PASS_TRESHOLD = 100;
+const PASS_TRESHOLD = 150;
 const NOTIFICATION_DURATION = 3000;
 
 const temperatureToDuration = temp => parseInt((320 - temp) / 10, 10);
@@ -52,6 +57,9 @@ export default {
       return {
         opacity: this.temperature / 200,
       };
+    },
+    duration() {
+      return temperatureToDuration(this.temperature);
     },
   },
   apollo: {
@@ -166,6 +174,7 @@ div {
   height: 100%;
   width: 100%;
   padding: 60px;
+  padding-top: 90px;
   background: #232222;
   display: flex;
   justify-content: center;
@@ -214,6 +223,26 @@ div {
   }
   .blur {
     filter: blur(20px);
+  }
+  .duration__container {
+    color: white;
+    margin-top: 30px;
+    user-select: none;
+    z-index: 5;
+    .description {
+      font-size: 14px;
+      opacity: .8;
+    }
+    .value {
+      margin-top: 10px;
+      color: $orange;
+      font-weight: 600;
+      font-size: 46px;
+    }
+    .scale {
+      font-weight: 500;
+      font-size: 20px;
+    }
   }
 }
 
