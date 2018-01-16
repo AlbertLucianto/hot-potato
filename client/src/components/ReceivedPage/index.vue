@@ -15,6 +15,9 @@
     </div>
   </div>
   <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
+  <transition enter-active-class="animated rubberBand">
+    <div class="login__info" v-if="!userId && mounted && !loading">Signup / Login<div class="small">to see your</div><div class="small">Potato Inbox</div></div>
+  </transition>
   <!-- <transition-group
     name="custom-classes-transition"
     enter-active-class="animated bounceIn"
@@ -59,6 +62,7 @@ export default {
       holdingOnly: true,
       activeOnly: true,
       sortedPotato: [],
+      mounted: false,
     };
   },
   apollo: {
@@ -176,6 +180,9 @@ export default {
       });
     },
   },
+  mounted() {
+    this.mounted = true;
+  },
 };
 </script>
 
@@ -256,6 +263,21 @@ $darkOrange: rgb(245,140,0);
   .empty__info {
     font-weight: 600;
     color: #BBB;
+  }
+  .login__info {
+    width: 50%;
+    height: 100px;
+    padding: 15px;
+    background: $darkOrange;
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 2.1rem;
+    color: #FFF;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px -10px $orange;
+    .small {
+      font-size: 1.2rem;
+    }
   }
   .new__notification {
     position: absolute;
