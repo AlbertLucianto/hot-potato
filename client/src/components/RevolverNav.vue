@@ -111,7 +111,11 @@ export default {
           else this.nextPage();
           this.dragged = 0;
         } else {
-          this.animatedTimeout = setTimeout(() => { this.animated = true; }, DYNAMICS_DURATION);
+          if (this.dragged === 0) {
+            this.animated = true;
+          } else {
+            this.animatedTimeout = setTimeout(() => { this.animated = true; }, DYNAMICS_DURATION);
+          }
           dynamics.animate(this, {
             dragged: 0,
           }, {
