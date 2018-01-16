@@ -1,5 +1,8 @@
 <template>
-<div class="thermo__container" @mousedown="startDrag" @mousemove="onDrag" @mouseup="onRelease">
+<div class="thermo__container"
+  @mousedown="startDrag" @touchstart="startDrag"
+  @mousemove="onDrag" @touchmove="onDrag"
+  @mouseup="onRelease" @touchend="onRelease">
   <div class="thermo__stick" ref="stick">
     <div class="thermo__level" :style="levelStyle">
       <div class="glare"/>
@@ -92,7 +95,7 @@ $darkOrange: rgb(245,140,0);
 .thermo__container {
   position: absolute;
   bottom: 35%;
-  left: 60px;
+  left: calc(20px + 2.5vw);
   height: 35%;
   width: 50px;
   cursor: -webkit-grab;

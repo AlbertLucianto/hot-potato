@@ -4,7 +4,7 @@
     <stop offset="0" stop-color="#845c28"/>
     <stop offset="1" stop-color="#ff3b30"/>
   </linearGradient>
-  <path class="body" @mousedown="startDrag" :class="{ dragging }"
+  <path class="body" @mousedown="startDrag" @touchstart="startDrag" :class="{ dragging }"
     d="M13.16,42.24C-2,41.88-.21,29.07.39,20.9S7.67.23,15,0,28.19,4.89,28,13.86s3.34,11.69,1.31,21.34S17.93,42.36,13.16,42.24Z"/>
   <g class="spots__group">
     <circle class="spot" cx="5" cy="20" r="0.8"/>
