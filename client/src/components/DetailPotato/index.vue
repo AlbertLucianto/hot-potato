@@ -164,6 +164,7 @@ $darkOrange: rgb(245,140,0);
   }
   .potato__details {
     min-width: 100px;
+    max-width: 110px;
     text-align: left;
     margin: 10px;
     padding: 0 10px;
