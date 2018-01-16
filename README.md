@@ -6,6 +6,7 @@
 
 > Hot potato is a simple game inpsired (or cloned to be exact) by Google internal tool. Players simply can create and pass potato to anyone for a limited time, otherwise they will drop it.
 
+## [Live Demo](https://albertlucianto.github.io/hot-potato)
 
 ## Dependencies
 
