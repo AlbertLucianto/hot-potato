@@ -81,14 +81,22 @@
   </tbody>
 </table>
 
-
-## Local Deployment
+## Deployment
 
 ### Server
 
+_If any version of `graphcool` is installed on your machine, uninstall it using `npm uninstall -g graphcool`. It's package name is now changed to `graphcool-framework`._
+
+1. Install graphcool-cli with `npm install -g graphcool-framework`.
+2. It is suggested to make an alias of `graphcool-framework` command to `gc`. For MacOS, can configure it in `~/.bash_profile`.
+
+___From here, every command of `gc` refers to `graphcool-framework`.___
+
+#### Local
+
 1. Set `server` as current working directory.
 2. Ensure docker is installed on the machine. Run it.
-3. Install graphcool-cli with `npm install -g graphcool@next`.
+3. 
 4. Run `gc local up --name <any_name_for_cluster>`. It will create three docker containers, including MySQL database.
 5. Run `gc deploy`.
 6. **If `.graphcoolrc` file is not yet there, it will ask you to choose a cluster, and automatically create the file. Else, delete `.graphcoolrc` file as it may fail the setup**
