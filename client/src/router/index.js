@@ -4,6 +4,7 @@ import AccountPage from '@/components/AccountPage';
 import NewPotato from '@/components/NewPotato';
 import ReceivedPage from '@/components/ReceivedPage';
 import SentPage from '@/components/SentPage';
+import HallOfShame from '@/components/HallOfShame';
 
 Vue.use(Router);
 
@@ -28,12 +29,17 @@ const mainRoutes = [
     name: 'Sent',
     component: SentPage,
   },
+  {
+    path: '/leaderboard',
+    name: 'Hall of Shame',
+    component: HallOfShame,
+  },
 ];
 
 const redirects = [
   {
     path: '/',
-    redirect: '/new',
+    redirect: '/account',
   },
 ];
 
