@@ -15,7 +15,7 @@
     </div>
   </div>
   <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
-  <transition enter-active-class="animated rubberBand">
+  <transition enter-active-class="animated bounceIn">
     <div class="login__info" v-if="!userId && mounted && !loading">Signup / Login<div class="small">to see your</div><div class="small">Potato Inbox</div></div>
   </transition>
   <!-- <transition-group

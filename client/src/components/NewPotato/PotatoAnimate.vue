@@ -19,7 +19,7 @@
 <script>
 import dynamics from 'dynamics.js';
 
-const START_POTATO_WIDTH = 180;
+const START_POTATO_WIDTH = 150;
 const DRAGGING_POTATO_WIDTH = 120;
 const DAMP_POSITIVE_Y_DRAG = 4;
 const DAMP_NEGATIVE_Y_DRAG = 1.5;

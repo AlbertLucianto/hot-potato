@@ -1,5 +1,8 @@
 <template>
 <div class="sentList__container">
+  <transition enter-active-class="animated bounceIn">
+    <div class="login__info" v-if="!userId && mounted && !loading">Signup / Login<div class="small">to see your</div><div class="small">Potato Outbox</div></div>
+  </transition>
   <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
   <detail-potato v-for="potato in sortedPotato"  v-if="!selected || selected === potato.potato.id"
     :key="potato.id" :potato="potato.potato" :from="potato.passedFrom"
@@ -24,6 +27,7 @@ export default {
       loading: 0,
       selected: '',
       sortedPotato: [],
+      mounted: false,
     };
   },
   apollo: {
@@ -82,19 +86,42 @@ export default {
       });
     },
   },
+  mounted() { this.mounted = true; },
 };
 </script>
 
 <style lang="scss" scoped>
+$pink: rgb(255,45,85);
+$red: rgb(255,59,48);
+$purple: rgb(88,86,214);
+$orange: rgb(255,149,0);
+$darkOrange: rgb(245,140,0);
+
 .sentList__container {
   box-sizing: border-box;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   padding: 50px 0 120px 0;
   height: 100%;
   overflow: scroll;
   background: #333;
+  .login__info {
+    width: 50%;
+    height: 100px;
+    padding: 15px;
+    background: $pink;
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 2.1rem;
+    color: #FFF;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px -10px $pink;
+    .small {
+      font-size: 1.2rem;
+    }
+  }
   .empty__info {
     font-weight: 600;
     color: #BBB;

@@ -113,7 +113,6 @@ export default {
       }).then((resDeploy) => {
         this.loading -= 1;
         const potatoId = resDeploy.data.deployPotato.id;
-        this.showPotato = false;
         this.$apollo.mutate({
           mutation: gql`mutation sendPotato($potatoId: ID!, $receiverId: ID!) {
             passPotato(potatoId: $potatoId, receiverId: $receiverId) {
@@ -125,23 +124,25 @@ export default {
             receiverId: this.selectedUser.id,
           },
         }).then(() => {
-          this.showPotato = true;
+          this.refreshPotato();
           this.notification = `New potato successfully sent to ${this.selectedUser.name}`;
-          setTimeout(() => {
-            this.notification = '';
-          }, NOTIFICATION_DURATION);
           this.selectedUser = undefined;
           this.search = '';
+          this.clearNotification();
         }).catch((passErr) => {
           console.log(passErr); // eslint-disable-line no-console
           const messageAr = passErr.message.split('error: ');
           this.notification = messageAr[2];
+          this.refreshPotato();
+          this.clearNotification();
         });
       }).catch((deployErr) => {
         console.log(deployErr); // eslint-disable-line no-console
         this.loading -= 1;
         const messageAr = deployErr.message.split('error: ');
         this.notification = messageAr[2];
+        this.refreshPotato();
+        this.clearNotification();
       });
     },
     emphasizeSearchInput() {
@@ -149,6 +150,17 @@ export default {
       setTimeout(() => {
         this.emphasized = false;
       }, 200);
+    },
+    clearNotification(ms = NOTIFICATION_DURATION) {
+      setTimeout(() => {
+        this.notification = '';
+      }, ms);
+    },
+    refreshPotato() {
+      this.showPotato = false;
+      setTimeout(() => {
+        this.showPotato = true;
+      });
     },
   },
   mounted() {
@@ -173,12 +185,11 @@ div {
 .newPotatoPage__container {
   height: 100%;
   width: 100%;
-  padding: 60px;
-  padding-top: 90px;
+  padding: 90px 40px 60px 120px;
   background: #232222;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   flex-direction: column;
   .new__notification {
     position: absolute;
@@ -214,8 +225,8 @@ div {
   .drag__guide {
     transform-origin: center;
     transform: rotate(-90deg);
-    width: 180px;
-    opacity: .2;
+    width: 90px;
+    opacity: .5;
     user-select: none;
   }
   .potatoAnimate {
