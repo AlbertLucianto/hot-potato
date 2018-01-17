@@ -1,3 +1,4 @@
 targets:
-  dev: local-hot-potato/cjbe0dlvk00040106rb3mrv9q
-  default: dev
+  dev: local-hot-potato/cjbz6gx4k00040197pfuy94yq
+  default: prod
+  prod: shared-ap-northeast-1/cjchrketi1sv80168snuj7ckr
