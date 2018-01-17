@@ -2,15 +2,15 @@
 
 
 
-## Overview
+# Overview
 
 > Hot potato is a simple game inpsired (or cloned to be exact) by Google internal tool. Players simply can create and pass potato to anyone for a limited time, otherwise they will drop it.
 
-## [Live Demo](https://albertlucianto.github.io/hot-potato)
+### [Live Demo](https://albertlucianto.github.io/hot-potato)
 
-## Dependencies
+# Dependencies
 
-### Server
+## Server
 
 <table>
   <tbody>
@@ -42,7 +42,7 @@
 
 
 
-### Client
+## Client
 
 <table>
   <tbody>
@@ -67,7 +67,9 @@
 </table>
 
 
-### Database (handled by Graphcool)
+## Database
+
+_Database is configured by Graphcool Framework by default_
 
 <table>
   <tbody>
@@ -81,9 +83,9 @@
   </tbody>
 </table>
 
-## Deployment
+# Deployment
 
-### Server
+## Server
 
 _If any version of `graphcool` is installed on your machine, uninstall it using `npm uninstall -g graphcool`. It's package name is now changed to `graphcool-framework`._
 
@@ -92,7 +94,7 @@ _If any version of `graphcool` is installed on your machine, uninstall it using 
 
 ___From here, every command of `gc` refers to `graphcool-framework`.___
 
-#### Local
+### Local
 
 1. Set `server` as current working directory.
 2. Ensure docker is installed on the machine. Run it.
@@ -101,7 +103,7 @@ ___From here, every command of `gc` refers to `graphcool-framework`.___
 5. Run `gc deploy`.
 6. **If `.graphcoolrc` file is not yet there, it will ask you to choose a cluster, and automatically create the file. Else, delete `.graphcoolrc` file as it may fail the setup**
 
-### Client
+## Client
 
 1. **Make sure you have set up the server**
 2. Set `server` as current working directory.
@@ -111,7 +113,7 @@ ___From here, every command of `gc` refers to `graphcool-framework`.___
 6. Set the `uri` to the endpoint just copied.
 7. Run dev server with `npm run dev`.
 
-#### Re-Deployment
+## Re-Deployment
 
 Some changes in graphql type schema may break something and difficult to fix. You can create a fresh cluster by deleting the old and create the new one.
 
@@ -137,7 +139,7 @@ docker volume rm `docker volume ls -q -f dangling=true`
 gc local nuke
 ```
 
-## Access MySQL in local deployment
+# Access MySQL in local deployment
 
 It is not recommended since graphcool uses its own hashing for its database implementation, thus it's not readable.
 
