@@ -1,10 +1,10 @@
 <template>
   <div class="potatoDetail__container" :class="{ selected, hidden }" @mousedown="handleClick(potato.id)">
     <!-- using if else to make it static (hashed) instead of media -->
-    <img class="potatoIcon" src="../../assets/SVG/list_dropped.svg" v-if="categoryByDate(potato) === category.dropped.name"/>
-    <img class="potatoIcon" src="../../assets/SVG/list_relax.svg" v-else-if="categoryByDate(potato) === category.relax.name"/>
-    <img class="potatoIcon" src="../../assets/SVG/list_medium.svg" v-else-if="categoryByDate(potato) === category.medium.name"/>
-    <img class="potatoIcon" src="../../assets/SVG/list_urgent.svg" v-else-if="categoryByDate(potato) === category.urgent.name"/>
+    <img class="potatoIcon potato--dropped" src="../../assets/SVG/list_dropped.svg" v-if="categoryByDate(potato) === category.dropped.name"/>
+    <img class="potatoIcon potato--relax" src="../../assets/SVG/list_relax.svg" v-else-if="categoryByDate(potato) === category.relax.name"/>
+    <img class="potatoIcon potato--medium" src="../../assets/SVG/list_medium.svg" v-else-if="categoryByDate(potato) === category.medium.name"/>
+    <img class="potatoIcon potato--urgent" src="../../assets/SVG/list_urgent.svg" v-else-if="categoryByDate(potato) === category.urgent.name"/>
     <div class="potato__details">
       <div class="time__value">{{ displayText(potato).value }}</div>
       <div class="time__scale">{{ displayText(potato).scale }}</div>
@@ -59,7 +59,7 @@ export default {
     displayText() {
       return (potato) => {
         const time = calcDiffTime(potato.droppedDate);
-        if (time < 0) return { info: `Dropped at ${new Date(potato.droppedDate).toDateString()}` };
+        if (time < 0) return { info: `Dropped on ${new Date(potato.droppedDate).toDateString()}` };
         if (time > 24 * 3600) {
           const value = Math.floor(time / 24 / 3600);
           return { value, scale: `day${value > 1 ? 's' : ''}` };
@@ -160,7 +160,17 @@ $darkOrange: rgb(245,140,0);
   .potatoIcon {
     max-height: 100px;
     max-width: 100px;
-    margin: 10px;
+    margin: 5px;
+    &.potato--dropped {
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+    &.potato--relax {}
+    &.potato--medium {}
+    &.potato--urgent {
+      max-height: 160px;
+      margin: -10px 5px;
+    }
   }
   .potato__details {
     min-width: 100px;
@@ -175,8 +185,9 @@ $darkOrange: rgb(245,140,0);
       font-size: 12px;
     }
     .time__info {
-      font-size: 14px;
-      color: #666;
+      font-size: 13px;
+      font-weight: 500;
+      color: #BBB;
     }
     .potato__detail {
       margin-bottom: 15px;
@@ -205,7 +216,23 @@ $darkOrange: rgb(245,140,0);
       max-height: 250px;
       max-width: 180px;
       flex-grow: 1;
-      margin: 30px;
+      margin: 20px;
+      &.potato--dropped {
+        max-width: 220px;
+        margin: -10px;
+      }
+      &.potato--relax {
+        animation: relax 3.5s ease alternate infinite;
+      }
+      &.potato--medium {
+        animation: medium 1.5s ease alternate infinite;
+      }
+      &.potato--urgent {
+        max-width: 220px;
+        max-height: 280px;
+        margin: -10px;
+        animation: urgent .6s ease alternate infinite;
+      }
     }
     .potato__details {
       min-width: 80px;
@@ -220,13 +247,43 @@ $darkOrange: rgb(245,140,0);
         margin-bottom: 30px;
       }
       .time__info {
-        margin-bottom: 20px;
+        margin-bottom: 40px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #AAA;
       }
     }
   }
   
   &:hover {
     cursor: pointer;
+  }
+}
+
+@keyframes relax {
+  100% {
+    transform: scale(.95);
+  }
+}
+
+@keyframes medium {
+  100% {
+    transform: scale(.96) rotate(1.5deg);
+  }
+}
+
+@keyframes urgent {
+  0% {
+    transform: rotate(-1.2deg);
+  }
+  33% {
+    transform: rotate(2deg);
+  }
+  66% {
+    transform: rotate(-1.5deg);
+  }
+  100% {
+    transform: scale(.98) rotate(2deg);
   }
 }
 </style>
