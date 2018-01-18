@@ -29,7 +29,7 @@ export default async (event: FunctionEvent<IEventData>) => {
     const shamefulUserCount = {};
     allShamefulUsers.forEach((user) => (user.id in shamefulUserCount) ?
       shamefulUserCount[user.id].count++ :
-      shamefulUserCount[user.id] = { count: 1, user });
+      shamefulUserCount[user.id] = { count: 1, ...user });
 
     const shamefulUserList = Object.keys(shamefulUserCount)
       .map((key) => shamefulUserCount[key])
