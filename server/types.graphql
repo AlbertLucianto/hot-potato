@@ -28,8 +28,7 @@ type Holder @model {
   createdAt: DateTime!
 
   user: User! @relation(name: "UserHold")
-  passedFrom: User! @relation(name: "UserPasses")
+  passedFrom: User @relation(name: "UserPasses")
   potato: Potato! @relation(name: "PotatoHeld")
-  sequence: Int! @default(value: 0)
   seen: Boolean @defaultValue(value: "false")
 }

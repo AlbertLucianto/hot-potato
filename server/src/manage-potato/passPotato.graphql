@@ -4,7 +4,6 @@
 # See proposal: https://github.com/graphcool/framework/issues/743
 type PassPotatoPayload {
   id: ID!
-  sequence: Int!
   droppedDate: DateTime!
 }
 

@@ -36,6 +36,8 @@ export default async (event: FunctionEvent<IEventData>) => {
 
     const potatoId = await createNewPotato(api, userId, duration);
 
+    await sendToSelf(api, potatoId, userId);
+
     return { data: { id: potatoId } };
   } catch (e) {
     console.log(e);
@@ -50,6 +52,7 @@ async function createNewPotato(api: GraphQLClient, userId: string, duration: num
         createdById: $userId
         droppedDate: $droppedDate
         duration: $duration
+        lastHeldById: $userId
       ) {
         id
       }
@@ -64,4 +67,22 @@ async function createNewPotato(api: GraphQLClient, userId: string, duration: num
 
   return api.request<{ createPotato: IPotato }>(mutation, variables)
     .then((res) => res.createPotato.id);
+}
+
+async function sendToSelf(api: GraphQLClient, potatoId: string, userId: string): Promise<string> {
+  const mutation = `
+    mutation passPotato($potatoId: ID!, $userId: ID!) {
+      createHolder(potatoId: $potatoId, userId: $userId) {
+        id
+      }
+    }
+  `;
+
+  const variables = {
+    potatoId,
+    userId,
+  };
+
+  return api.request<{ createHolder: { id: string }}>(mutation, variables)
+    .then((res) => res.createHolder.id);
 }

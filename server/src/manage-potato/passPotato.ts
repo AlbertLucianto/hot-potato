@@ -13,7 +13,6 @@ interface IUser {
 interface IHolder {
   id: string;
   user: { id: string };
-  sequence: number;
 }
 
 interface IPotato {
@@ -63,11 +62,11 @@ export default async (event: FunctionEvent<IEventData>) => {
     }
 
     // Add to list of holders in the potato
-    const { id, sequence } = await passPotato(api, potatoId, receiverId, userId);
+    const { id } = await passPotato(api, potatoId, receiverId, userId);
 
     const droppedDate = await updateDroppedDate(api, potatoId, receiverId);
 
-    return { data: { id, droppedDate, sequence } };
+    return { data: { id, droppedDate } };
   } catch (e) {
     console.log(e);
     return { error: "An unexpected error occured during passPotato" };
@@ -156,28 +155,10 @@ async function passPotato(
   receiverId: string,
   passedFromId: string,
 ): Promise<IHolder> {
-  const nextSequence = await api.request<{ allHolders: [IHolder] }>(`
-    query lastSeq($potatoId: ID!) {
-      allHolders(
-        filter: {
-          potato: {
-            id: $potatoId
-          }
-        },
-        orderBy: sequence_ASC,
-        last: 1
-      ) {
-        sequence
-      }
-    }
-  `, { potatoId })
-    .then((r) => !r.allHolders[0] ? 0 : r.allHolders[0].sequence + 1);
-
   const mutation = `
-    mutation passPotato($potatoId: ID!, $receiverId: ID!, $sequence: Int!, $passedFromId: ID!) {
-      createHolder(potatoId: $potatoId, userId: $receiverId, sequence: $sequence, passedFromId: $passedFromId) {
+    mutation passPotato($potatoId: ID!, $receiverId: ID!, $passedFromId: ID!) {
+      createHolder(potatoId: $potatoId, userId: $receiverId, passedFromId: $passedFromId) {
         id
-        sequence
       }
     }
   `;
@@ -186,7 +167,6 @@ async function passPotato(
     passedFromId,
     potatoId,
     receiverId,
-    sequence: nextSequence,
   };
 
   return api.request<{ createHolder: IHolder }>(mutation, variables)
