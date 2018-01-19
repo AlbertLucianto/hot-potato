@@ -33,7 +33,7 @@ export default async (event: FunctionEvent<IEventData>) => {
 
     const shamefulUserList = Object.keys(shamefulUserCount)
       .map((key) => shamefulUserCount[key])
-      .sort((l, r) => l.count - r.count);
+      .sort((l, r) => r.count - l.count);
 
     return { data: ("length" in event.data && event.data.length < shamefulUserList.length) ?
       shamefulUserList.slice(0, event.data.length) : shamefulUserList };
