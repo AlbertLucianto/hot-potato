@@ -82,7 +82,7 @@ $darkOrange: rgb(245,140,0);
   box-sizing: border-box;
   padding: 90px 10px 20px 10px;
   height: 100%;
-  background-color: #FAFAFE;
+  background: linear-gradient(5deg, #232222 30%, $pink 200%);
   .list__item {
     display: flex;
     padding: 10px 20px;
@@ -92,7 +92,7 @@ $darkOrange: rgb(245,140,0);
     border-bottom: 1px solid rgba(120,120,200,.1);
     box-shadow: 0 5px 25px -10px rgba(0,0,0,.2);
     border-radius: 5px;
-    background-color: white;
+    background-color: #FFFFFFDD;
     animation-duration: 1.2s;
     &:not(.show) {
       opacity: 0;
@@ -106,7 +106,7 @@ $darkOrange: rgb(245,140,0);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #666;
+      color: #444;
       &.rank--1 { background-image: url('../../assets/SVG/medal_gold.svg'); }
       &.rank--2 { background-image: url('../../assets/SVG/medal_silver.svg'); }
       &.rank--3 { background-image: url('../../assets/SVG/medal_bronze.svg'); }
@@ -126,7 +126,7 @@ $darkOrange: rgb(245,140,0);
       }
       .userDetail__email {
         font-size: 12px;
-        color: #888;
+        color: #666;
         text-overflow: ellipsis;
       }
     }
@@ -135,7 +135,7 @@ $darkOrange: rgb(245,140,0);
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #AAA;
+      color: #777;
       .count__value {
         font-size: 24px;
         margin-right: 5px;

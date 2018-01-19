@@ -155,7 +155,6 @@ export default {
           passPotato(receiverId: $receiverId, potatoId: $potatoId) {
             id
             droppedDate
-            sequence
           }
         }`,
         variables: {

@@ -39,6 +39,9 @@ export default {
     TemperatureSetting,
     SearchBar,
   },
+  props: {
+    userId: String,
+  },
   data() {
     return {
       showPotato: false,
@@ -66,9 +69,9 @@ export default {
     $loadingKey: 'loading',
     allUsers() {
       return {
-        query: gql`query getUser($contain: String!, $pageSize: Int!) {
+        query: gql`query getUser($contain: String!, $pageSize: Int!, $userId: ID!) {
           allUsers(
-            filter: { name_contains: $contain },
+            filter: { name_contains: $contain, id_not: $userId },
             first: $pageSize
           ) {
             id
@@ -80,6 +83,7 @@ export default {
           return {
             contain: this.search,
             pageSize: SEARCH_PAGE_SIZE,
+            userId: this.userId,
           };
         },
         skip() {
