@@ -55,6 +55,7 @@ async function getListPotato(
     ) {
       allHolders(filter: {
         user: { id: $userId },
+        passedFrom: { id_not: $userId },
         potato: {
           ${filterDropped ? "droppedDate_gt: $currentDate," : ""}
           ${currentlyHold ? "lastHeldBy: { id: $userId }" : ""}
