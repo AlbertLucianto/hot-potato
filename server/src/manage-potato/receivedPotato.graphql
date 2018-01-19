@@ -1,6 +1,7 @@
 type PotatoPayload {
   potato: Json!
   passedFrom: Json!
+  seen: Boolean!
 }
 
 extend type Query {

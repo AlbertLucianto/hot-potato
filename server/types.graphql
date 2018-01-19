@@ -31,4 +31,5 @@ type Holder @model {
   passedFrom: User! @relation(name: "UserPasses")
   potato: Potato! @relation(name: "PotatoHeld")
   sequence: Int! @default(value: 0)
+  seen: Boolean @defaultValue(value: "false")
 }

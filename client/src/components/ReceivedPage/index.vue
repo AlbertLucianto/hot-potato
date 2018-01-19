@@ -76,6 +76,7 @@ export default {
           ) {
             potato
             passedFrom
+            seen
           }
         }`,
         variables() {

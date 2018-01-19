@@ -7,8 +7,10 @@ interface IEventData {
 }
 
 interface IHolder {
+  id: string;
   potato: { id: string, droppedDate: string };
   passedFrom: { id: string, name: string, email: string };
+  seen: boolean;
 }
 
 export default async (event: FunctionEvent<IEventData>) => {
@@ -26,6 +28,12 @@ export default async (event: FunctionEvent<IEventData>) => {
     const { filterDropped, currentlyHold } = event.data;
 
     const listPotato = await getListPotato(api, userId, !!filterDropped, !!currentlyHold);
+
+    const unseenHolders = listPotato
+      .filter((holder) => !holder.seen)
+      .map((holder) => holder.id);
+
+    await Promise.all(unseenHolders.map((holderId) => setSeen(api, holderId)));
 
     return { data: listPotato };
   } catch (e) {
@@ -52,6 +60,8 @@ async function getListPotato(
           ${currentlyHold ? "lastHeldBy: { id: $userId }" : ""}
         }
       }) {
+        id
+        seen
         potato {
           id
           droppedDate
@@ -76,4 +86,18 @@ async function getListPotato(
 
   return api.request<{ allHolders: [IHolder] }>(query, variables)
     .then((res) => res.allHolders);
+}
+
+async function setSeen(api: GraphQLClient, holderId: string) {
+  const mutation = `
+    mutation setSeen($holderId: ID!) {
+      updateHolder(id: $holderId, seen: true) {
+        id
+      }
+    }
+  `;
+
+  const variables = { holderId };
+
+  return api.request<{ IHolder }>(mutation, variables);
 }
