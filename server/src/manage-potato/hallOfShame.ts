@@ -5,16 +5,13 @@ interface IEventData {
   length: number;
 }
 
-interface IHolder {
-  user: {
+interface IPotato {
+  lastHeldBy: {
     id: string;
     name: string;
     email: string;
-    createdAt: Date;
   };
 }
-
-interface IHolders extends Array<IHolder> {}
 
 export default async (event: FunctionEvent<IEventData>) => {
   console.log(event);
@@ -51,13 +48,10 @@ async function getAllDroppedPotatoes(api: GraphQLClient, currentTime: Date) {
       allPotatoes(filter: {
         droppedDate_lt: $currentTime
       }) {
-        holders(orderBy: sequence_ASC, last:1) {
-          user {
-            id,
-            name,
-            email,
-            createdAt
-          }
+        lastHeldBy {
+          id,
+          name,
+          email,
         }
       }
     }
@@ -67,7 +61,6 @@ async function getAllDroppedPotatoes(api: GraphQLClient, currentTime: Date) {
     currentTime,
   };
 
-  return api.request<{ allPotatoes: Array<{ holders: IHolders }> }>(query, variables)
-    .then((r) => r.allPotatoes.filter((potato) => potato.holders.length > 0)
-      .map((potato) => ({ ...potato.holders[0].user })));
+  return api.request<{ allPotatoes: [IPotato] }>(query, variables)
+    .then((r) => r.allPotatoes.map((potato) => potato.lastHeldBy));
 }
