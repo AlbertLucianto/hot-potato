@@ -52,7 +52,13 @@ export default {
 </script>
 
 <style lang="scss">
+html, body {
+  max-width:100%;
+  max-height:100%;
+  overflow:hidden;
+}
 body {
+  position: relative;
   background-color: #556;
   margin: 0;
 }
