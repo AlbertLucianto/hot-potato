@@ -1,5 +1,6 @@
 <template>
 <div class="receivedList__container">
+  <toast-potaotes :queue="newReceived"/>
   <div class="toggles__container">
     <div class="toggle__wrapper" :class="{ active: holdingOnly }">
       <div class="label">Holding Only</div>
@@ -23,7 +24,7 @@
     enter-active-class="animated bounceIn"
   > -->
   <detail-potato v-for="potato in sortedPotato" v-if="!selected || selected === potato.potato.id"
-    :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom" :userId="userId"
+    :key="potato.potato.id" :potato="potato.potato" :from="potato.passedFrom" :to="potato.user" :userId="userId"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect" :class="{ blur: searching }"/>
   <!-- </transition-group> -->
   <div class="gradient--botom" />
@@ -38,6 +39,7 @@
 import gql from 'graphql-tag';
 import DetailPotato, { calcDiffTime } from '../DetailPotato';
 import SearchBar from '../SearchBar';
+import ToastPotaotes from './ToastPotatoes';
 
 const SEARCH_PAGE_SIZE = 5;
 const NOTIFICATION_DURATION = 3000;
@@ -46,6 +48,7 @@ export default {
   components: {
     DetailPotato,
     SearchBar,
+    ToastPotaotes,
   },
   props: {
     userId: String,
@@ -77,6 +80,7 @@ export default {
             potato
             passedFrom
             seen
+            user
           }
         }`,
         variables() {
@@ -97,9 +101,12 @@ export default {
     },
     allUsers() {
       return {
-        query: gql`query getUser($contain: String!, $pageSize: Int!) {
+        query: gql`query getUser($contain: String!, $pageSize: Int!, $userId: ID!) {
           allUsers(
-            filter: { name_contains: $contain },
+            filter: {
+              name_contains: $contain,
+              id_not: $userId
+            },
             first: $pageSize
           ) {
             id
@@ -111,6 +118,7 @@ export default {
           return {
             contain: this.search,
             pageSize: SEARCH_PAGE_SIZE,
+            userId: this.userId,
           };
         },
         skip() {
@@ -127,6 +135,10 @@ export default {
     isEmpty() {
       const empty = this.receivedPotato ? !this.receivedPotato.length : false;
       return empty && !this.loading;
+    },
+    newReceived() {
+      const list = this.receivedPotato ? this.receivedPotato : [];
+      return list.filter(holder => !holder.seen);
     },
   },
   methods: {
