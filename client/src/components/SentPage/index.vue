@@ -4,8 +4,8 @@
     <div class="login__info" v-if="!userId && mounted && !loading">Signup / Login<div class="small">to see your</div><div class="small">Potato Outbox</div></div>
   </transition>
   <div class="empty__info" v-if="isEmpty">Search Empty Results</div>
-  <detail-potato v-for="potato in sortedPotato"  v-if="!selected || selected === potato.potato.id"
-    :key="potato.id" :potato="potato.potato" :from="potato.passedFrom"
+  <detail-potato v-for="potato in sortedPotato" v-if="!selected || selected === potato.potato.id"
+    :key="potato.id" :potato="potato.potato" :from="potato.passedFrom" :to="potato.user"
     :selected="selected === potato.potato.id" :select="select" :deselect="deselect"/>
   <div class="gradient--botom" :class="{ hidden: selected }"/>
 </div>
@@ -45,6 +45,10 @@ export default {
               droppedDate
             }
             passedFrom {
+              id
+              name
+            }
+            user {
               id
               name
             }

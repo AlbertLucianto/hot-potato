@@ -10,7 +10,7 @@
       :send="deployAndPassPotato" :canSend="!!selectedUser" :remindInput="emphasizeSearchInput"/>
   </transition>
   <temperature-setting :setTemperature="setTemperature" :class="{ blur: searching }"/>
-  <div class="duration__container">
+  <div class="duration__container" :class="{ blur: searching }">
     <div class="description">This potato will be dropped in</div>
     <div class="value">{{ duration }}</div>
     <div class="scale">hours</div>

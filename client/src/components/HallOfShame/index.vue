@@ -82,7 +82,7 @@ $darkOrange: rgb(245,140,0);
   box-sizing: border-box;
   padding: 90px 10px 20px 10px;
   height: 100%;
-  background: linear-gradient(5deg, #232222 30%, $pink 200%);
+  background-color: #FAFAFC;
   .list__item {
     display: flex;
     padding: 10px 20px;

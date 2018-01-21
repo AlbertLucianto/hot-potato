@@ -30,6 +30,7 @@ export default {
       required: true,
     },
     from: Object,
+    to: Object,
     hidden: Boolean,
     selected: Boolean,
     select: Function,
@@ -76,12 +77,13 @@ export default {
     },
     details() {
       const { duration, createdBy, lastHeldBy } = this.Potato ? this.Potato : {};
-      const { from } = this;
+      const { from, to } = this;
 
       return this.Potato ? [
         { label: 'Duration', value: `${duration} hour${duration <= 1 ? '' : 's'}` },
         { label: 'Created By', value: createdBy.id === this.userId ? 'You' : createdBy.name },
         { label: 'Passed From', value: from.id === this.userId ? 'You' : from.name },
+        { label: 'Passed To', value: to.id === this.userId ? 'You' : to.name },
         { label: 'Last Held By', value: lastHeldBy.id === this.userId ? 'You' : lastHeldBy.name },
       ] : [];
     },

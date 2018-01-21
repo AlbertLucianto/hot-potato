@@ -26,7 +26,7 @@
           <div class="button button__signup" :class="{ disabled: loading, input__wrapper: signingUp, active: active === 2 }" @mousedown="signup">
             <div v-if="!signingUp">Signup</div>
             <img v-if="signingUp" src="../../assets/SVG/cross.svg" class="button__icon cancel" @click="cancelSignup"/>
-            <input v-if="signingUp" v-model="nickname" placeholder="What should we call you with?"
+            <input v-if="signingUp" v-model="nickname" placeholder="What should we call you?"
               @focus="setActive(2)" @blur="setActive(-1)" :class="{ inactive: active !== 2 }"/>
             <img v-if="signingUp" src="../../assets/SVG/tick.svg" class="button__icon confirm" :class="{ disabled: !nickname }" @mousedown="signupUser"/>
           </div>
@@ -291,6 +291,7 @@ div {
           }
           input::placeholder {
             font-size: .8em;
+            font-weight: 600;
           }
           .inactive {
             color: #282830;
