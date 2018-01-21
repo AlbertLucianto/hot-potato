@@ -6,10 +6,20 @@ interface IEventData {
   currentlyHold?: boolean;
 }
 
+interface IUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 interface IHolder {
   id: string;
-  potato: { id: string, droppedDate: string };
-  passedFrom: { id: string, name: string, email: string };
+  potato: {
+    id: string,
+    droppedDate: string,
+    lastHeldBy: IUser,
+  };
+  passedFrom: IUser;
   seen: boolean;
 }
 
@@ -51,11 +61,12 @@ async function getListPotato(
   const query = `
     query getListPotato(
       $userId: ID!,
+      $nullVar: ID,
       ${filterDropped ? "$currentDate: DateTime!" : ""}
     ) {
       allHolders(filter: {
         user: { id: $userId },
-        passedFrom: { id_not: $userId },
+        passedFrom: { id_not: $nullVar },
         potato: {
           ${filterDropped ? "droppedDate_gt: $currentDate," : ""}
           ${currentlyHold ? "lastHeldBy: { id: $userId }" : ""}
@@ -66,8 +77,18 @@ async function getListPotato(
         potato {
           id
           droppedDate
+          lastHeldBy {
+            id
+            name
+            email
+          }
         }
         passedFrom {
+          id
+          name
+          email
+        }
+        user {
           id
           name
           email
@@ -79,7 +100,8 @@ async function getListPotato(
   const variables: {
     currentDate?: string,
     userId: string,
-  } = { userId };
+    nullVar: null,
+  } = { userId, nullVar: null };
 
   if (filterDropped) {
     variables.currentDate = new Date().toISOString();

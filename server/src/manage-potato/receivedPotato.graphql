@@ -1,6 +1,7 @@
 type PotatoPayload {
   potato: Json!
   passedFrom: Json
+  user: Json
   seen: Boolean!
 }
 
